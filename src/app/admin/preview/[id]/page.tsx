@@ -21,7 +21,7 @@ async function Preview({ params }: Props) {
   if (!entry || !hasTemplateComponent(entry.template_number)) notFound();
 
   const images = await entryImages(entry);
-  const mapped = images ? toSiteData(entry, images) : null;
+  const mapped = images.logoUrl && images.photoUrl ? toSiteData(entry, { logoUrl: images.logoUrl, photoUrl: images.photoUrl }) : null;
   const copy = await getTemplateCopy(entry.template_number);
   if (!mapped || !copy) notFound();
 

@@ -10,7 +10,7 @@ describe("catalog", () => {
     expect(isLiveTemplate(1)).toBe(true);
     expect(isLiveTemplate(2)).toBe(false);
     expect(isLiveTemplate(99)).toBe(false);
-    expect(getTemplateMeta(1)?.name).toBe("Classic Tax Pro");
+    expect(getTemplateMeta(1)?.name).toBe("Template 1");
   });
   it("every live template has default copy", () => {
     for (const t of TEMPLATE_CATALOG.filter((t) => t.status === "live")) {

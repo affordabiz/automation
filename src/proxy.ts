@@ -33,11 +33,10 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Refreshes expiring sessions and verifies the token locally, with no auth round trip on each click.
+  const { data } = await supabase.auth.getClaims();
 
-  if (!user && !isPublic) {
+  if (!data?.claims.sub && !isPublic) {
     return withAdminHeaders(NextResponse.redirect(new URL("/admin/login", request.url)));
   }
   return withAdminHeaders(response);

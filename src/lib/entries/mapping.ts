@@ -1,15 +1,25 @@
 import type { SiteData } from "@/templates/types";
 
-export type EntryStatus = "pending" | "approved" | "rejected" | "suspended";
+export type EntryStatus = "approved" | "pending" | "draft" | "suspended";
 
-export const ENTRY_STATUSES: readonly EntryStatus[] = ["pending", "approved", "rejected", "suspended"];
+export const ENTRY_STATUSES: readonly EntryStatus[] = ["approved", "pending", "draft", "suspended"];
 
 export const ENTRY_STATUS_LABELS: Record<EntryStatus, string> = {
-  pending: "Pending",
-  approved: "Live",
-  rejected: "Rejected",
+  approved: "Active",
+  pending: "Pending Review",
+  draft: "Draft",
   suspended: "Suspended",
 };
+
+export interface EntryListItem {
+  id: string;
+  status: EntryStatus;
+  slug: string;
+  template_number: number;
+  full_name: string;
+  business_name: string;
+  created_at: string;
+}
 
 export interface LiveEntryRow {
   id: string;
@@ -23,6 +33,17 @@ export interface LiveEntryRow {
   serving_area: string;
   logo_url: string | null;
   photo_url: string | null;
+}
+
+export interface EntryMessage {
+  id: string;
+  entry_id: string;
+  direction: "outbound" | "inbound";
+  body: string;
+  author_name: string;
+  email_status: "sent" | "failed" | "not_sent" | null;
+  read_at: string | null;
+  created_at: string;
 }
 
 export function toSiteData(row: LiveEntryRow, images?: { logoUrl: string; photoUrl: string }): SiteData | null {

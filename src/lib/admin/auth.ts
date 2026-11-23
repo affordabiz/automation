@@ -69,17 +69,17 @@ export type AccessState =
   | { state: "denied" }
   | { state: "ready"; member: Member };
 
-/** Verifies the session with Supabase and reloads access on every request, so changes apply immediately. */
+/** Verifies the session and reloads access on every request, so changes apply immediately. */
 export const getAccess = cache(async (): Promise<AccessState> => {
   await connection(); // Access must never be decided at build time.
   if (!isSupabaseConfigured()) return { state: "signed-out" };
   const supabase = await createSessionClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { state: "signed-out" };
+  // Verifies the signed token locally. The team_members check below still applies removals immediately.
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims.sub;
+  if (!userId) return { state: "signed-out" };
 
-  const member = await loadMember(user.id);
+  const member = await loadMember(userId);
   if (!member || member.status !== "active") return { state: "denied" };
   return { state: "ready", member };
 });

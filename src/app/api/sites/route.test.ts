@@ -4,17 +4,23 @@ const mocks = vi.hoisted(() => ({
   verifyTurnstile: vi.fn(),
   checkSlug: vi.fn(),
   createPendingEntry: vi.fn(),
-  sendEmail: vi.fn(),
+  getAutoPublish: vi.fn(),
+  emailClient: vi.fn(),
+  publishEntry: vi.fn(),
 }));
 vi.mock("@/lib/turnstile", () => ({ verifyTurnstile: mocks.verifyTurnstile }));
 vi.mock("@/lib/slugCheck", () => ({ checkSlug: mocks.checkSlug }));
-vi.mock("@/lib/entries/store", () => ({ createPendingEntry: mocks.createPendingEntry }));
-vi.mock("@/lib/brevo", () => ({ sendEmail: mocks.sendEmail }));
+vi.mock("@/lib/entries/store", () => ({
+  createPendingEntry: mocks.createPendingEntry,
+  getAutoPublish: mocks.getAutoPublish,
+}));
+vi.mock("@/lib/entries/workflow", () => ({ emailClient: mocks.emailClient, publishEntry: mocks.publishEntry }));
 
 import { POST } from "./route";
 import { __resetRateLimits } from "@/lib/rateLimit";
 
 const png = () => new File([new Uint8Array([137, 80, 78, 71])], "a.png", { type: "image/png" });
+const entry = { id: "entry-1", slug: "jane-doe-tax" };
 
 function request(overrides: Record<string, string | null> = {}) {
   const fd = new FormData();
@@ -34,8 +40,11 @@ beforeEach(() => {
   Object.values(mocks).forEach((m) => m.mockReset());
   mocks.verifyTurnstile.mockResolvedValue(true);
   mocks.checkSlug.mockResolvedValue({ available: true });
-  mocks.createPendingEntry.mockResolvedValue("created");
-  mocks.sendEmail.mockResolvedValue({ ok: true });
+  mocks.createPendingEntry.mockResolvedValue({ result: "created", entry });
+  mocks.getAutoPublish.mockResolvedValue(false);
+  mocks.emailClient.mockResolvedValue("sent");
+  mocks.publishEntry.mockResolvedValue({ ok: true, emailStatus: "sent" });
+  vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://affordabiz.test");
 });
 
 describe("POST /api/sites", () => {
@@ -48,17 +57,32 @@ describe("POST /api/sites", () => {
       expect.any(File),
       expect.any(File),
     );
-    const email = mocks.sendEmail.mock.calls[0][0];
-    expect(email.to).toEqual({ email: "jane@example.com", name: "Jane Doe" });
-    expect(email.subject).toBe("We received your request — Jane Doe Tax Service");
-    expect(email.html).not.toContain("/jane-doe-tax");
+    expect(mocks.publishEntry).not.toHaveBeenCalled();
+    expect(mocks.emailClient.mock.calls[0][1].subject).toBe("We received your request — Jane Doe Tax Service");
   });
 
-  it("still succeeds when the email fails", async () => {
-    mocks.sendEmail.mockResolvedValue({ ok: false, error: "boom" });
+  it("publishes immediately when auto-publish is on", async () => {
+    mocks.getAutoPublish.mockResolvedValue(true);
+    const res = await POST(request());
+    expect(await res.json()).toEqual({ status: "published", url: "https://affordabiz.test/jane-doe-tax" });
+    expect(mocks.publishEntry).toHaveBeenCalledWith(entry, null);
+    expect(mocks.emailClient).not.toHaveBeenCalled();
+  });
+
+  it("falls back to manual review when auto-publish fails", async () => {
+    mocks.getAutoPublish.mockResolvedValue(true);
+    mocks.publishEntry.mockResolvedValue({ ok: false, error: "no" });
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
-    expect((await POST(request())).status).toBe(201);
-    expect(spy).toHaveBeenCalled();
+    expect(await (await POST(request())).json()).toEqual({ status: "pending" });
+    expect(mocks.emailClient).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it("keeps manual review when the setting can't be read", async () => {
+    mocks.getAutoPublish.mockRejectedValue(new Error("down"));
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(await (await POST(request())).json()).toEqual({ status: "pending" });
+    expect(mocks.publishEntry).not.toHaveBeenCalled();
     spy.mockRestore();
   });
 
@@ -87,7 +111,7 @@ describe("POST /api/sites", () => {
   });
 
   it("409 when the create races with another submission", async () => {
-    mocks.createPendingEntry.mockResolvedValue("conflict");
+    mocks.createPendingEntry.mockResolvedValue({ result: "conflict" });
     expect((await POST(request())).status).toBe(409);
   });
 

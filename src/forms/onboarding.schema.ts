@@ -58,7 +58,7 @@ const TYPE_NAMES: Record<string, string> = {
   "image/png": "PNG", "image/jpeg": "JPEG", "image/webp": "WebP", "image/svg+xml": "SVG",
 };
 
-function checkImage(def: FieldDef, value: FormDataEntryValue | null): string | null {
+export function checkImage(def: FieldDef, value: FormDataEntryValue | null): string | null {
   if (!(value instanceof File) || value.size === 0) return `${def.label} is required`;
   const accept = def.accept ?? [];
   if (!accept.includes(value.type)) {

@@ -11,7 +11,9 @@ export const PERMISSION_GROUPS = [
     feature: "Entries",
     permissions: [
       { key: "entries.view", label: "View entries" },
-      { key: "entries.review", label: "Approve and reject entries" },
+      { key: "entries.review", label: "Edit, publish and message clients" },
+      { key: "entries.delete", label: "Delete entries" },
+      { key: "settings.manage", label: "Turn auto-publish on or off" },
     ],
   },
   {

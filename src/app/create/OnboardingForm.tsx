@@ -98,7 +98,7 @@ export function OnboardingForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<{ email: string; url?: string } | null>(null);
   const turnstile = useRef<TurnstileInstance>(null);
   const slugCheck = useSlugAvailability(slug);
 
@@ -118,12 +118,13 @@ export function OnboardingForm() {
       const res = await fetch("/api/sites", { method: "POST", body: fd });
       const body = (await res.json().catch(() => ({}))) as {
         status?: string;
+        url?: string;
         errors?: Errors;
         suggestion?: string;
         error?: string;
       };
-      if (res.status === 201 && body.status === "pending") {
-        setSubmittedEmail(String(fd.get("email")));
+      if (res.status === 201 && (body.status === "pending" || body.status === "published")) {
+        setSubmitted({ email: String(fd.get("email")), url: body.status === "published" ? body.url : undefined });
         window.scrollTo({ top: 0 });
         return;
       }
@@ -139,14 +140,28 @@ export function OnboardingForm() {
     }
   }
 
-  if (submittedEmail) {
+  if (submitted) {
     return (
       <div className="rounded-3xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-200">
         <CircleCheck className="mx-auto size-12 text-emerald-500" aria-hidden />
-        <h2 className="mt-4 text-2xl font-semibold text-slate-900">Your request is under review</h2>
-        <p className="mt-2 text-slate-600">
-          Once our team approves your webpage, we&apos;ll email the link to <strong>{submittedEmail}</strong>.
-        </p>
+        <h2 className="mt-4 text-2xl font-semibold text-slate-900">
+          {submitted.url ? "Your webpage is live" : "Your request is under review"}
+        </h2>
+        {submitted.url ? (
+          <a
+            href={submitted.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-700"
+          >
+            {submitted.url.replace(/^https?:\/\//, "")}
+            <ExternalLink className="size-4" aria-hidden />
+          </a>
+        ) : (
+          <p className="mt-2 text-slate-600">
+            Once our team approves your webpage, we&apos;ll email the link to <strong>{submitted.email}</strong>.
+          </p>
+        )}
       </div>
     );
   }
@@ -266,7 +281,7 @@ export function OnboardingForm() {
                     checked={template === t.number}
                     onChange={() => setTemplate(t.number)}
                   />
-                  Template {t.number} — {t.name}
+                  {t.name}
                 </label>
                 {live ? (
                   <a

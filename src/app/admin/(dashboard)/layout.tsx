@@ -1,8 +1,10 @@
 import { LogOut } from "lucide-react";
 import { Suspense } from "react";
 import { requireMember } from "@/lib/admin/auth";
+import { hasPermission } from "@/lib/admin/permissions";
 import { signOutAction } from "../(auth)/actions";
 import { AdminNav } from "../_components/AdminNav";
+import { NotificationBell, NotificationBellFallback } from "../_components/NotificationBell";
 
 function ShellFallback() {
   return <p className="p-8 text-sm text-slate-500">Loading dashboard…</p>;
@@ -27,7 +29,16 @@ async function Shell({ children }: { children: React.ReactNode }) {
           </form>
         </div>
       </aside>
-      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">{children}</main>
+      <div className="min-w-0 flex-1">
+        {hasPermission(member, "entries.view") ? (
+          <div className="sticky top-0 z-30 flex h-14 items-center justify-end border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-10">
+            <Suspense fallback={<NotificationBellFallback />}>
+              <NotificationBell />
+            </Suspense>
+          </div>
+        ) : null}
+        <main className="px-4 py-6 sm:px-6 lg:px-10 lg:py-8">{children}</main>
+      </div>
     </div>
   );
 }
