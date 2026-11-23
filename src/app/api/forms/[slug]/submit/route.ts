@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { ONBOARDING_FIELDS, type FieldDef } from "@/forms/onboarding.fields";
 import { checkImage, type OnboardingData } from "@/forms/onboarding.schema";
+import { enqueueForSubmission, processDueJobs } from "@/lib/automations/engine";
 import { createPendingEntry, type Entry } from "@/lib/entries/store";
 import { finishNewEntry } from "@/lib/entries/workflow";
 import { allowedExtensions, displayValue, fileExtension, isEmptyValue, isInputField, validateForm } from "@/lib/forms/engine";
@@ -169,6 +170,20 @@ export async function POST(req: Request, ctx: { params: Promise<{ slug: string }
     }
 
     const webpageUrl = entry ? await finishNewEntry(entry) : null;
+
+    // A saved response must not fail because of an email problem.
+    try {
+      await enqueueForSubmission({
+        formId: definition.id,
+        formName: definition.name,
+        submissionId,
+        answers,
+        submittedAt: new Date().toISOString(),
+      });
+      after(() => processDueJobs().catch((e) => console.error("[automations] immediate run failed", e)));
+    } catch (e) {
+      console.error("[automations] queue failed", submissionId, e);
+    }
     return json({ ok: true, ...(webpageUrl ? { webpageUrl } : {}) }, 201);
   } catch (e) {
     console.error("[forms] submit failed", slug, e);

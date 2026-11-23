@@ -10,7 +10,7 @@ const ITEMS: { label: string; href?: string; icon: typeof Users; permission?: Pe
   { label: "Forms", href: "/admin/forms", icon: FileText, permission: "forms.view" },
   { label: "Entries", href: "/admin/entries", icon: Inbox, permission: "entries.view" },
   { label: "Webpages", href: "/admin/webpages", icon: Globe, permission: "webpages.view" },
-  { label: "Automations", icon: Workflow, permission: "automations.view" },
+  { label: "Automations", href: "/admin/automations", icon: Workflow, permission: "automations.view" },
   { label: "Team", href: "/admin/team", icon: Users, permission: "team.view" },
   { label: "Roles", href: "/admin/roles", icon: ShieldCheck, permission: "roles.manage" },
   { label: "Audit log", href: "/admin/audit", icon: ScrollText, permission: "audit.view" },
