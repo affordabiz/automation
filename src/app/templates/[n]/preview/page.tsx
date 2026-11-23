@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTemplateCopy } from "@/lib/sanity/queries";
 import { resolveTokens, siteTokenValues } from "@/lib/tokens";
 import { getTemplateMeta, isLiveTemplate, TEMPLATE_CATALOG } from "@/templates/catalog";
-import { getTemplateComponent } from "@/templates/registry";
+import { hasTemplateComponent, TemplateView } from "@/templates/registry";
 import { sampleSite } from "@/templates/sample";
 
 type Props = { params: Promise<{ n: string }> };
@@ -22,17 +22,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PreviewPage({ params }: Props) {
   const n = Number((await params).n);
-  if (!isLiveTemplate(n)) notFound();
-  const Template = getTemplateComponent(n);
+  if (!isLiveTemplate(n) || !hasTemplateComponent(n)) notFound();
   const copy = await getTemplateCopy(n);
-  if (!Template || !copy) notFound();
+  if (!copy) notFound();
   const site = sampleSite(n);
   return (
     <>
       <div className="bg-slate-900 py-2 text-center text-xs font-medium text-white">
         Template preview with sample details — your own information replaces it.
       </div>
-      <Template site={site} copy={resolveTokens(copy, siteTokenValues(site))} />
+      <TemplateView templateNumber={n} site={site} copy={resolveTokens(copy, siteTokenValues(site))} />
     </>
   );
 }

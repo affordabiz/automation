@@ -4,7 +4,7 @@ import { getSiteBySlug, getTemplateCopy } from "@/lib/sanity/queries";
 import { isValidSlugFormat } from "@/lib/slug";
 import { resolveTokens, siteTokenValues } from "@/lib/tokens";
 import { isLiveTemplate } from "@/templates/catalog";
-import { getTemplateComponent } from "@/templates/registry";
+import { hasTemplateComponent, TemplateView } from "@/templates/registry";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -17,10 +17,10 @@ async function load(slug: string) {
   if (!isValidSlugFormat(slug)) return null;
   const site = await getSiteBySlug(slug);
   if (!site || !isLiveTemplate(site.templateNumber)) return null;
-  const Template = getTemplateComponent(site.templateNumber);
+  if (!hasTemplateComponent(site.templateNumber)) return null;
   const copy = await getTemplateCopy(site.templateNumber);
-  if (!Template || !copy) return null;
-  return { site, Template, copy: resolveTokens(copy, siteTokenValues(site)) };
+  if (!copy) return null;
+  return { site, copy: resolveTokens(copy, siteTokenValues(site)) };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -38,6 +38,6 @@ export default async function SitePage({ params }: Props) {
   const { slug } = await params;
   const data = await load(slug);
   if (!data) notFound();
-  const { Template, site, copy } = data;
-  return <Template site={site} copy={copy} />;
+  const { site, copy } = data;
+  return <TemplateView templateNumber={site.templateNumber} site={site} copy={copy} />;
 }

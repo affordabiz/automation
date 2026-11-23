@@ -1,9 +1,18 @@
-import type { ComponentType } from "react";
 import type { TemplateProps } from "./types";
 import TemplateOne from "./t1";
 
-const COMPONENTS: Partial<Record<number, ComponentType<TemplateProps>>> = { 1: TemplateOne };
+const IMPLEMENTED = new Set([1]);
 
-export function getTemplateComponent(n: number): ComponentType<TemplateProps> | null {
-  return COMPONENTS[n] ?? null;
+export function hasTemplateComponent(n: number): boolean {
+  return IMPLEMENTED.has(n);
+}
+
+/** Renders the template for `templateNumber`. Add a case per new template. */
+export function TemplateView({ templateNumber, ...props }: TemplateProps & { templateNumber: number }) {
+  switch (templateNumber) {
+    case 1:
+      return <TemplateOne {...props} />;
+    default:
+      return null;
+  }
 }
