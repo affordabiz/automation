@@ -1,19 +1,11 @@
 import "server-only";
 import type { OnboardingData } from "@/forms/onboarding.schema";
+import { assetUrl, isSanityAssetId } from "@/lib/sanity/assetUrl";
+import { deleteUnusedAssets, uploadImageAsset } from "@/lib/sanity/assets";
 import { serviceClient } from "@/lib/supabase/service";
 import type { EntryListItem, EntryMessage, EntryStatus, LiveEntryRow } from "./mapping";
 
-export const PRIVATE_BUCKET = "entry-uploads";
-export const PUBLIC_BUCKET = "webpage-assets";
-const SIGNED_URL_SECONDS = 60 * 60;
 const LIST_LIMIT = 500;
-
-const EXTENSIONS: Record<string, string> = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-  "image/webp": "webp",
-  "image/svg+xml": "svg",
-};
 
 export interface Entry extends LiveEntryRow {
   form_id: string;
@@ -39,40 +31,38 @@ export async function isSlugTaken(slug: string, exceptId?: string): Promise<bool
   return (count ?? 0) > 0;
 }
 
-export async function uploadPrivateImage(entryId: string, name: "logo" | "photo", file: File): Promise<string> {
-  const path = `${entryId}/${name}-${crypto.randomUUID().slice(0, 8)}.${EXTENSIONS[file.type]}`;
-  const { error } = await serviceClient()
-    .storage.from(PRIVATE_BUCKET)
-    .upload(path, Buffer.from(await file.arrayBuffer()), { contentType: file.type });
-  if (error) throw new Error(`Could not upload ${name}: ${error.message}`);
-  return path;
-}
+export const uploadEntryImage = uploadImageAsset;
 
 export async function createPendingEntry(
   input: OnboardingData,
   logo: File,
   photo: File,
+  formId?: string,
 ): Promise<{ result: "created"; entry: Entry } | { result: "conflict" }> {
   const service = serviceClient();
-  const { data: form, error: formError } = await service
-    .from("forms")
-    .select("id")
-    .eq("key", "onboarding")
-    .single<{ id: string }>();
-  if (formError) throw new Error(`Could not load form: ${formError.message}`);
+  let resolvedFormId = formId;
+  if (!resolvedFormId) {
+    const { data: form, error: formError } = await service
+      .from("forms")
+      .select("id")
+      .eq("key", "onboarding")
+      .single<{ id: string }>();
+    if (formError) throw new Error(`Could not load form: ${formError.message}`);
+    resolvedFormId = form.id;
+  }
 
   const id = crypto.randomUUID();
   const uploaded: string[] = [];
   try {
     const [logoPath, photoPath] = await Promise.all([
-      uploadPrivateImage(id, "logo", logo).then((p) => (uploaded.push(p), p)),
-      uploadPrivateImage(id, "photo", photo).then((p) => (uploaded.push(p), p)),
+      uploadEntryImage(logo).then((p) => (uploaded.push(p), p)),
+      uploadEntryImage(photo).then((p) => (uploaded.push(p), p)),
     ]);
     const { data, error } = await service
       .from("entries")
       .insert({
         id,
-        form_id: form.id,
+        form_id: resolvedFormId,
         slug: input.slug,
         template_number: input.templateNumber,
         full_name: input.fullName,
@@ -87,13 +77,13 @@ export async function createPendingEntry(
       .select(ENTRY_COLUMNS)
       .single<Entry>();
     if (error) {
-      await service.storage.from(PRIVATE_BUCKET).remove(uploaded);
+      await deleteUnusedAssets(uploaded);
       if (error.code === "23505") return { result: "conflict" };
       throw new Error(`Could not save entry: ${error.message}`);
     }
     return { result: "created", entry: data };
   } catch (e) {
-    if (uploaded.length > 0) await service.storage.from(PRIVATE_BUCKET).remove(uploaded);
+    await deleteUnusedAssets(uploaded);
     throw e;
   }
 }
@@ -137,38 +127,13 @@ export async function countEntries(status: EntryStatus): Promise<number> {
   return count ?? 0;
 }
 
-async function signedUrl(path: string | null): Promise<string | null> {
-  if (!path) return null;
-  const { data, error } = await serviceClient().storage.from(PRIVATE_BUCKET).createSignedUrl(path, SIGNED_URL_SECONDS);
-  return error ? null : data.signedUrl;
-}
+const imageUrl = (id: string | null) => (id && isSanityAssetId(id) ? assetUrl(id) : null);
 
-/** Published images use public URLs. Unpublished images use short-lived signed URLs. */
 export async function entryImages(entry: Entry): Promise<{ logoUrl: string | null; photoUrl: string | null }> {
-  const [logoUrl, photoUrl] = await Promise.all([
-    entry.logo_url ?? signedUrl(entry.logo_path),
-    entry.photo_url ?? signedUrl(entry.photo_path),
-  ]);
-  return { logoUrl, photoUrl };
+  return { logoUrl: entry.logo_url ?? imageUrl(entry.logo_path), photoUrl: entry.photo_url ?? imageUrl(entry.photo_path) };
 }
 
-export async function publishImage(path: string): Promise<string> {
-  const storage = serviceClient().storage;
-  const { data, error } = await storage.from(PRIVATE_BUCKET).download(path);
-  if (error) throw new Error(`Could not read image: ${error.message}`);
-  const { error: uploadError } = await storage
-    .from(PUBLIC_BUCKET)
-    .upload(path, data, { contentType: data.type, upsert: true, cacheControl: "31536000" });
-  if (uploadError) throw new Error(`Could not publish image: ${uploadError.message}`);
-  return storage.from(PUBLIC_BUCKET).getPublicUrl(path).data.publicUrl;
-}
-
-export async function removeStoredImages(paths: readonly (string | null)[]): Promise<void> {
-  const clean = paths.filter((p): p is string => Boolean(p));
-  if (clean.length === 0) return;
-  const storage = serviceClient().storage;
-  await Promise.allSettled([storage.from(PRIVATE_BUCKET).remove(clean), storage.from(PUBLIC_BUCKET).remove(clean)]);
-}
+export const removeStoredImages = deleteUnusedAssets;
 
 export async function logContactMessage(entry: {
   siteId: string;

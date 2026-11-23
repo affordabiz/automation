@@ -1,7 +1,7 @@
 export const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,48}[a-z0-9])$/;
 
 export const RESERVED_SLUGS: ReadonlySet<string> = new Set([
-  "studio", "api", "create", "templates", "_next", "admin",
+  "studio", "api", "create", "templates", "_next", "admin", "embed",
   "favicon.ico", "robots.txt", "sitemap.xml",
 ]);
 

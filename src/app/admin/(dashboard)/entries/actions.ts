@@ -12,13 +12,13 @@ import {
   getEntry,
   isSlugTaken,
   markMessagesRead,
-  publishImage,
   removeStoredImages,
   setAutoPublish,
-  uploadPrivateImage,
+  uploadEntryImage,
   type Entry,
 } from "@/lib/entries/store";
 import { emailClient, publishEntry, type ClientEmailStatus } from "@/lib/entries/workflow";
+import { assetUrl } from "@/lib/sanity/assetUrl";
 import { isReservedSlug, isValidSlugFormat, RESERVED_MESSAGE, SLUG_FORMAT_MESSAGE, TAKEN_MESSAGE } from "@/lib/slug";
 import { serviceClient } from "@/lib/supabase/service";
 import { isLiveTemplate } from "@/templates/catalog";
@@ -188,8 +188,8 @@ async function resolveImage(entry: Entry, name: "logo" | "photo", form: FormData
   if (file instanceof File && file.size > 0) {
     const problem = checkImage(def, file);
     if (problem) return { error: problem };
-    const path = await uploadPrivateImage(entry.id, name, file);
-    const url = isPublic ? await publishImage(path) : null;
+    const path = await uploadEntryImage(file);
+    const url = isPublic ? assetUrl(path) : null;
     return { path, url, uploaded: path, replaced: currentPath };
   }
   if (form.get(`remove_${name}`) === "1") {

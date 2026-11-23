@@ -2,12 +2,14 @@ import "server-only";
 import { revalidateTag } from "next/cache";
 import { recordAudit } from "@/lib/admin/audit";
 import { sendEmail } from "@/lib/brevo";
+import { entryReceivedEmail } from "@/lib/emails/entryStatus";
 import type { EmailContent } from "@/lib/emails/layout";
 import { siteReadyEmail } from "@/lib/emails/siteReady";
 import { siteUrl } from "@/lib/siteUrl";
 import { serviceClient } from "@/lib/supabase/service";
 import { isLiveTemplate } from "@/templates/catalog";
-import { addEntryMessage, publishImage, type Entry } from "./store";
+import { assetUrl } from "@/lib/sanity/assetUrl";
+import { addEntryMessage, getAutoPublish, type Entry } from "./store";
 
 export type ClientEmailStatus = "sent" | "failed" | "not_sent";
 export interface Actor {
@@ -53,6 +55,28 @@ export async function emailClient(
   return status;
 }
 
+/** Applies the auto-publish setting to a new entry. Any failure leaves it safely in manual review. */
+export async function finishNewEntry(entry: Entry): Promise<string | null> {
+  let autoPublish = false;
+  try {
+    autoPublish = await getAutoPublish();
+  } catch (e) {
+    console.error("[entries] auto-publish setting unavailable", e);
+  }
+  if (autoPublish) {
+    const published = await publishEntry(entry, null);
+    if (published.ok) return siteUrl(entry.slug);
+    console.error("[entries] auto-publish failed, left for review", entry.id, published.error);
+  }
+  await emailClient(
+    entry,
+    entryReceivedEmail({ fullName: entry.full_name, businessName: entry.business_name }),
+    "We received your request. Our team will review your webpage and email you the link once it's approved.",
+    { name: "Affordabiz" },
+  );
+  return null;
+}
+
 export type PublishResult =
   | { ok: true; emailStatus: ClientEmailStatus | null }
   | { ok: false; error: string };
@@ -67,10 +91,8 @@ export async function publishEntry(entry: Entry, actor: Actor | null): Promise<P
   let logoUrl = entry.logo_url;
   let photoUrl = entry.photo_url;
   try {
-    [logoUrl, photoUrl] = await Promise.all([
-      logoUrl ?? publishImage(entry.logo_path!),
-      photoUrl ?? publishImage(entry.photo_path!),
-    ]);
+    logoUrl ??= assetUrl(entry.logo_path!);
+    photoUrl ??= assetUrl(entry.photo_path!);
   } catch (e) {
     console.error("[entries] publishing images failed", entry.id, e);
     return { ok: false, error: "Couldn't publish the images. Nothing went live." };

@@ -7,7 +7,7 @@ import { hasPermission, type Permission } from "@/lib/admin/permissions";
 
 const ITEMS: { label: string; href?: string; icon: typeof Users; permission?: Permission }[] = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
-  { label: "Forms", icon: FileText, permission: "forms.view" },
+  { label: "Forms", href: "/admin/forms", icon: FileText, permission: "forms.view" },
   { label: "Entries", href: "/admin/entries", icon: Inbox, permission: "entries.view" },
   { label: "Webpages", href: "/admin/webpages", icon: Globe, permission: "webpages.view" },
   { label: "Automations", icon: Workflow, permission: "automations.view" },
