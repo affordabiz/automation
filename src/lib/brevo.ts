@@ -10,8 +10,13 @@ export interface EmailMessage {
 }
 export type SendResult = { ok: true; messageId?: string } | { ok: false; error: string };
 
+function isDryRun(): boolean {
+  const v = (process.env.BREVO_DRY_RUN ?? "").trim().toLowerCase();
+  return v === "1" || v === "true";
+}
+
 export async function sendEmail(msg: EmailMessage): Promise<SendResult> {
-  if (process.env.BREVO_DRY_RUN === "1") {
+  if (isDryRun()) {
     console.info("[brevo:dry-run]", msg.to.email, msg.subject);
     return { ok: true, messageId: "dry-run" };
   }

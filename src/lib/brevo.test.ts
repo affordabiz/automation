@@ -34,8 +34,8 @@ describe("sendEmail", () => {
     vi.stubEnv("BREVO_API_KEY", "");
     expect((await sendEmail(msg)).ok).toBe(false);
   });
-  it("dry-run never calls fetch", async () => {
-    vi.stubEnv("BREVO_DRY_RUN", "1");
+  it.each(["1", "true", "TRUE"])("dry-run (%s) never calls fetch", async (flag) => {
+    vi.stubEnv("BREVO_DRY_RUN", flag);
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
