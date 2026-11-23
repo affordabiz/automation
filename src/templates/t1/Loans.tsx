@@ -22,14 +22,18 @@ export function Loans({ copy }: TemplateProps) {
         </div>
         <div>
           <div className="mx-auto w-fit rounded-2xl bg-white px-6 py-4">
-            <Image
-              unoptimized
-              src={loans.partnerLogoUrl}
-              alt={loans.partnerName}
-              width={320}
-              height={90}
-              className="h-16 w-auto object-contain"
-            />
+            {loans.partnerLogoUrl ? (
+              <Image
+                unoptimized
+                src={loans.partnerLogoUrl}
+                alt={loans.partnerName}
+                width={320}
+                height={90}
+                className="h-16 w-auto object-contain"
+              />
+            ) : (
+              <p className={`${display} text-3xl font-bold italic text-(--t1-crimson)`}>{loans.partnerName}</p>
+            )}
           </div>
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
             {loans.cards.map((c, i) => {

@@ -137,7 +137,8 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
   loans: {
     promoLines: ["Pre-Pack Loans", "Are Here!"],
     promoBadge: "Available Starting January 2",
-    partnerLogoUrl: "https://taxprep.me/wp-content/uploads/2020/10/Refund-ADvantage.jpg",
+    // Leave empty to show a text wordmark; paste a self-hosted logo URL in Studio to use an image.
+    partnerLogoUrl: "",
     partnerName: "Refund Advantage",
     cards: [
       { title: "No-Cost Taxpayer Refund Advance Loans", detail: "Loans of $250, $500, & $1,000" },
