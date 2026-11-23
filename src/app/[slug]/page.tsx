@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getSiteBySlug, getTemplateCopy } from "@/lib/sanity/queries";
+import { getSiteBySlug } from "@/lib/entries/live";
+import { getTemplateCopy } from "@/lib/sanity/queries";
 import { isValidSlugFormat } from "@/lib/slug";
 import { resolveTokens, siteTokenValues } from "@/lib/tokens";
 import { isLiveTemplate } from "@/templates/catalog";

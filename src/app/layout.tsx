@@ -6,8 +6,8 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Affordabiz — Your business webpage in minutes",
-  description: "Pick a template, fill in your details and get a professional webpage instantly.",
+  title: "Affordabiz — Your professional business webpage",
+  description: "Pick a template, add your details and get a professional webpage after a quick review.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

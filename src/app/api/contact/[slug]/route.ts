@@ -4,8 +4,8 @@ import { contactSchema } from "@/forms/contact.schema";
 import { sendEmail } from "@/lib/brevo";
 import { contactMessageEmail } from "@/lib/emails/contactMessage";
 import { clientIp, rateLimit } from "@/lib/rateLimit";
-import { getSiteBySlug } from "@/lib/sanity/queries";
-import { logContactMessage } from "@/lib/sanity/write";
+import { getSiteBySlug } from "@/lib/entries/live";
+import { logContactMessage } from "@/lib/entries/store";
 import { siteUrl } from "@/lib/siteUrl";
 import { verifyTurnstile } from "@/lib/turnstile";
 

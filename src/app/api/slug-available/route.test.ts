@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const isSlugTaken = vi.fn();
-vi.mock("@/lib/sanity/write", () => ({ isSlugTaken: (s: string) => isSlugTaken(s) }));
+vi.mock("@/lib/entries/store", () => ({ isSlugTaken: (s: string) => isSlugTaken(s) }));
 
 import { GET } from "./route";
 import { __resetRateLimits } from "@/lib/rateLimit";
@@ -29,7 +29,7 @@ describe("GET /api/slug-available", () => {
       message: "This address is already taken — please choose a different one.", suggestion: "jane-2",
     });
   });
-  it("reports invalid and reserved without hitting Sanity", async () => {
+  it("reports invalid and reserved without hitting the database", async () => {
     expect((await (await call("a")).json()).reason).toBe("invalid");
     expect((await (await call("studio")).json()).reason).toBe("reserved");
     expect(isSlugTaken).not.toHaveBeenCalled();

@@ -6,10 +6,10 @@ export default function Home() {
       <div className="max-w-2xl text-center">
         <p className="text-sm font-semibold uppercase tracking-widest text-slate-500">Affordabiz</p>
         <h1 className="mt-3 text-5xl font-semibold tracking-tight text-slate-900">
-          Your professional webpage, live in minutes.
+          Your professional business webpage.
         </h1>
         <p className="mt-5 text-lg text-slate-600">
-          Pick a template, add your details and logo, and get a shareable link straight away.
+          Pick a template and add your details and logo. We&apos;ll review it and email your link once it&apos;s approved.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link

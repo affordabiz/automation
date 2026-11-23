@@ -11,10 +11,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "seed": "tsx --env-file=.env.local scripts/seed-templates.ts"
+    "seed": "tsx --env-file=.env.local scripts/seed-templates.ts",
+    "admin:bootstrap": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/bootstrap-owner.mts",
+    "admin:import-sanity": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/import-sanity-sites.mts"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.6.3",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.2",
     "lucide-react": "^1.77.0",
     "next": "16.4.6",
     "next-sanity": "^13.5.1",

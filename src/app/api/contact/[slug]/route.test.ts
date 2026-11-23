@@ -7,8 +7,8 @@ const mocks = vi.hoisted(() => ({
   sendEmail: vi.fn(),
 }));
 vi.mock("@/lib/turnstile", () => ({ verifyTurnstile: mocks.verifyTurnstile }));
-vi.mock("@/lib/sanity/queries", () => ({ getSiteBySlug: mocks.getSiteBySlug }));
-vi.mock("@/lib/sanity/write", () => ({ logContactMessage: mocks.logContactMessage }));
+vi.mock("@/lib/entries/live", () => ({ getSiteBySlug: mocks.getSiteBySlug }));
+vi.mock("@/lib/entries/store", () => ({ logContactMessage: mocks.logContactMessage }));
 vi.mock("@/lib/brevo", () => ({ sendEmail: mocks.sendEmail }));
 
 import { POST } from "./route";

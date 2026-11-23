@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
 import { parseOnboarding } from "@/forms/onboarding.schema";
 import { sendEmail } from "@/lib/brevo";
-import { siteReadyEmail } from "@/lib/emails/siteReady";
+import { entryReceivedEmail } from "@/lib/emails/entryStatus";
+import { createPendingEntry } from "@/lib/entries/store";
 import { clientIp, rateLimit } from "@/lib/rateLimit";
-import { createSite } from "@/lib/sanity/write";
 import { TAKEN_MESSAGE } from "@/lib/slug";
 import { checkSlug } from "@/lib/slugCheck";
-import { siteUrl } from "@/lib/siteUrl";
 import { verifyTurnstile } from "@/lib/turnstile";
 
 const json = (body: unknown, status: number) => NextResponse.json(body, { status });
@@ -44,22 +42,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await createSite(data, logo, photo);
+    const result = await createPendingEntry(data, logo, photo);
     if (result === "conflict") return json({ errors: { slug: [TAKEN_MESSAGE] } }, 409);
   } catch (e) {
     console.error("[sites] create failed", e);
-    return json({ error: "We couldn't create your webpage. Please try again." }, 500);
+    return json({ error: "We couldn't submit your request. Please try again." }, 500);
   }
-
-  // Clear any cached 404 for this slug so the new page shows immediately.
-  revalidateTag(`site:${data.slug}`, { expire: 0 });
-  const url = siteUrl(data.slug);
 
   const email = await sendEmail({
     to: { email: data.email, name: data.fullName },
-    ...siteReadyEmail({ fullName: data.fullName, businessName: data.businessName, url }),
+    ...entryReceivedEmail({ fullName: data.fullName, businessName: data.businessName }),
   });
-  if (!email.ok) console.error("[sites] site-ready email failed", data.slug, email.error);
+  if (!email.ok) console.error("[sites] received email failed", data.slug, email.error);
 
-  return json({ url }, 201);
+  return json({ status: "pending" }, 201);
 }

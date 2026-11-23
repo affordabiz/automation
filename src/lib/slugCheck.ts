@@ -8,7 +8,7 @@ import {
   TAKEN_MESSAGE,
   type SlugCheckResponse,
 } from "@/lib/slug";
-import { isSlugTaken } from "@/lib/sanity/write";
+import { isSlugTaken } from "@/lib/entries/store";
 
 export async function checkSlug(rawSlug: string): Promise<SlugCheckResponse> {
   const slug = rawSlug.trim().toLowerCase();

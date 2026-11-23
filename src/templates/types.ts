@@ -4,7 +4,7 @@ export interface LinkItem {
 }
 
 export interface SiteData {
-  /** Sanity document id, null for previews */
+  /** Entry id, null for previews */
   id: string | null;
   /** null for previews (contact form disabled) */
   slug: string | null;

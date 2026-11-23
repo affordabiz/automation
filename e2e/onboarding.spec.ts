@@ -4,8 +4,8 @@ import { expect, test } from "@playwright/test";
 const PIXEL = path.join(__dirname, "fixtures", "pixel.png");
 const slug = `e2e-${Date.now()}`;
 
-test.describe.serial("onboarding → site → contact", () => {
-  test("owner creates a webpage", async ({ page }) => {
+test.describe.serial("onboarding → pending review", () => {
+  test("owner submits a webpage for review", async ({ page }) => {
     await page.goto("/create");
     await page.getByLabel("Full name").fill("Erin Example");
     await page.getByLabel("Business name").fill("E2E Tax Service");
@@ -18,10 +18,10 @@ test.describe.serial("onboarding → site → contact", () => {
     await page.getByLabel(/Template 1/).check();
     await page.getByLabel("Logo").setInputFiles(PIXEL);
     await page.getByLabel("Your photo").setInputFiles(PIXEL);
-    const submit = page.getByRole("button", { name: "Create my webpage" });
+    const submit = page.getByRole("button", { name: "Submit for review" });
     await expect(submit).toBeEnabled({ timeout: 30_000 });
     await submit.click();
-    await expect(page.getByRole("heading", { name: "Your webpage is live!" })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("heading", { name: "Your request is under review" })).toBeVisible({ timeout: 30_000 });
   });
 
   test("the slug is now reported as taken", async ({ page }) => {
@@ -31,19 +31,11 @@ test.describe.serial("onboarding → site → contact", () => {
     await expect(page.getByText("This address is already taken — please choose a different one.")).toBeVisible({
       timeout: 15_000,
     });
-    await expect(page.getByRole("button", { name: "Create my webpage" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Submit for review" })).toBeDisabled();
   });
 
-  test("the webpage renders and its contact form sends", async ({ page }) => {
+  test("the webpage stays private until it is approved", async ({ page }) => {
     await page.goto(`/${slug}`);
-    await expect(page.getByRole("heading", { level: 1, name: "E2E Tax Service" })).toBeVisible();
-    await expect(page.getByText("Erin Example, PTIN-Certified Tax Professional")).toBeVisible();
-    await page.getByLabel("Full Name").fill("Vic Visitor");
-    await page.getByLabel("Email Address").fill("vic@example.com");
-    await page.getByLabel("Message").fill("Can you help with my return?");
-    const submit = page.getByRole("button", { name: "Submit" });
-    await expect(submit).toBeEnabled({ timeout: 30_000 });
-    await submit.click();
-    await expect(page.getByText("Thanks! Your message has been sent.")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { level: 1, name: "E2E Tax Service" })).toHaveCount(0);
   });
 });

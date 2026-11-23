@@ -3,15 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   verifyTurnstile: vi.fn(),
   checkSlug: vi.fn(),
-  createSite: vi.fn(),
+  createPendingEntry: vi.fn(),
   sendEmail: vi.fn(),
-  revalidateTag: vi.fn(),
 }));
 vi.mock("@/lib/turnstile", () => ({ verifyTurnstile: mocks.verifyTurnstile }));
 vi.mock("@/lib/slugCheck", () => ({ checkSlug: mocks.checkSlug }));
-vi.mock("@/lib/sanity/write", () => ({ createSite: mocks.createSite }));
+vi.mock("@/lib/entries/store", () => ({ createPendingEntry: mocks.createPendingEntry }));
 vi.mock("@/lib/brevo", () => ({ sendEmail: mocks.sendEmail }));
-vi.mock("next/cache", () => ({ revalidateTag: mocks.revalidateTag }));
 
 import { POST } from "./route";
 import { __resetRateLimits } from "@/lib/rateLimit";
@@ -36,25 +34,24 @@ beforeEach(() => {
   Object.values(mocks).forEach((m) => m.mockReset());
   mocks.verifyTurnstile.mockResolvedValue(true);
   mocks.checkSlug.mockResolvedValue({ available: true });
-  mocks.createSite.mockResolvedValue("created");
+  mocks.createPendingEntry.mockResolvedValue("created");
   mocks.sendEmail.mockResolvedValue({ ok: true });
-  vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://affordabiz.test");
 });
 
 describe("POST /api/sites", () => {
-  it("creates the site, clears the cached 404 and emails the owner", async () => {
+  it("saves a pending entry, returns no public URL and emails a receipt", async () => {
     const res = await POST(request());
     expect(res.status).toBe(201);
-    expect(await res.json()).toEqual({ url: "https://affordabiz.test/jane-doe-tax" });
-    expect(mocks.createSite).toHaveBeenCalledWith(
+    expect(await res.json()).toEqual({ status: "pending" });
+    expect(mocks.createPendingEntry).toHaveBeenCalledWith(
       expect.objectContaining({ slug: "jane-doe-tax", templateNumber: 1 }),
       expect.any(File),
       expect.any(File),
     );
-    expect(mocks.revalidateTag).toHaveBeenCalledWith("site:jane-doe-tax", { expire: 0 });
     const email = mocks.sendEmail.mock.calls[0][0];
     expect(email.to).toEqual({ email: "jane@example.com", name: "Jane Doe" });
-    expect(email.html).toContain("https://affordabiz.test/jane-doe-tax");
+    expect(email.subject).toBe("We received your request — Jane Doe Tax Service");
+    expect(email.html).not.toContain("/jane-doe-tax");
   });
 
   it("still succeeds when the email fails", async () => {
@@ -69,7 +66,7 @@ describe("POST /api/sites", () => {
     const res = await POST(request({ email: "bad" }));
     expect(res.status).toBe(400);
     expect((await res.json()).errors.email).toBeDefined();
-    expect(mocks.createSite).not.toHaveBeenCalled();
+    expect(mocks.createPendingEntry).not.toHaveBeenCalled();
   });
 
   it("403 when Turnstile fails or honeypot is filled", async () => {
@@ -90,12 +87,12 @@ describe("POST /api/sites", () => {
   });
 
   it("409 when the create races with another submission", async () => {
-    mocks.createSite.mockResolvedValue("conflict");
+    mocks.createPendingEntry.mockResolvedValue("conflict");
     expect((await POST(request())).status).toBe(409);
   });
 
-  it("500 when Sanity fails", async () => {
-    mocks.createSite.mockRejectedValue(new Error("sanity down"));
+  it("500 when the database fails", async () => {
+    mocks.createPendingEntry.mockRejectedValue(new Error("database down"));
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     expect((await POST(request())).status).toBe(500);
     spy.mockRestore();

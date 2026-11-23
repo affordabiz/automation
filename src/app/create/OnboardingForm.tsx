@@ -98,7 +98,7 @@ export function OnboardingForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [created, setCreated] = useState<{ url: string; email: string } | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
   const turnstile = useRef<TurnstileInstance>(null);
   const slugCheck = useSlugAvailability(slug);
 
@@ -117,13 +117,13 @@ export function OnboardingForm() {
     try {
       const res = await fetch("/api/sites", { method: "POST", body: fd });
       const body = (await res.json().catch(() => ({}))) as {
-        url?: string;
+        status?: string;
         errors?: Errors;
         suggestion?: string;
         error?: string;
       };
-      if (res.status === 201 && body.url) {
-        setCreated({ url: body.url, email: String(fd.get("email")) });
+      if (res.status === 201 && body.status === "pending") {
+        setSubmittedEmail(String(fd.get("email")));
         window.scrollTo({ top: 0 });
         return;
       }
@@ -139,23 +139,14 @@ export function OnboardingForm() {
     }
   }
 
-  if (created) {
+  if (submittedEmail) {
     return (
       <div className="rounded-3xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-200">
         <CircleCheck className="mx-auto size-12 text-emerald-500" aria-hidden />
-        <h2 className="mt-4 text-2xl font-semibold text-slate-900">Your webpage is live!</h2>
+        <h2 className="mt-4 text-2xl font-semibold text-slate-900">Your request is under review</h2>
         <p className="mt-2 text-slate-600">
-          We&apos;ve also emailed the link to <strong>{created.email}</strong>.
+          Once our team approves your webpage, we&apos;ll email the link to <strong>{submittedEmail}</strong>.
         </p>
-        <a
-          href={created.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-700"
-        >
-          {created.url.replace(/^https?:\/\//, "")}
-          <ExternalLink className="size-4" aria-hidden />
-        </a>
       </div>
     );
   }
@@ -330,7 +321,7 @@ export function OnboardingForm() {
           className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {submitting && <LoaderCircle className="size-4 animate-spin" aria-hidden />}
-          {submitting ? "Creating your webpage…" : "Create my webpage"}
+          {submitting ? "Submitting…" : "Submit for review"}
         </button>
         {slugCheck.status.state !== "available" && slug !== "" && (
           <p className="text-xs text-slate-500">Choose an available web address to continue.</p>
