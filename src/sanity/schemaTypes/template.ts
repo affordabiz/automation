@@ -36,6 +36,7 @@ export const template = defineType({
           ],
         }),
         strings("highlights"),
+        str("highlightsHeading", "Highlights heading"),
         defineField({
           name: "intro",
           type: "object",
@@ -107,6 +108,8 @@ export const template = defineType({
           title: "Cash advance / loans",
           type: "object",
           fields: [
+            str("heading"),
+            str("subheading"),
             strings("promoLines"),
             str("promoBadge"),
             str("partnerLogoUrl", "Partner logo URL"),

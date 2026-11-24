@@ -1,7 +1,16 @@
 import { BadgeCheck, Mail, MapPin, Phone } from "lucide-react";
 import type { TemplateProps } from "../types";
-import { ContactForm } from "./ContactForm";
-import { container, h2, section, telHref } from "./theme";
+import { ContactForm, type ContactFormStyle } from "../shared/ContactForm";
+import { btnPrimary, container, h2, section, telHref } from "./theme";
+
+const FORM_STYLE: ContactFormStyle = {
+  field:
+    "w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-base text-slate-800 ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--t1-orange) sm:text-[0.95rem]",
+  button: btnPrimary,
+  success:
+    "flex flex-col items-center gap-3 rounded-2xl bg-(--t1-mint) p-8 text-center text-lg font-semibold text-(--t1-teal)",
+  successIcon: "size-10 text-(--t1-orange)",
+};
 
 export function Contact({ site, copy }: TemplateProps) {
   const rows = [
@@ -48,7 +57,7 @@ export function Contact({ site, copy }: TemplateProps) {
           </ul>
         </div>
         <div className="min-w-0 rounded-[2rem] bg-white p-6 text-slate-800 shadow-2xl sm:p-9">
-          <ContactForm slug={site.slug} />
+          <ContactForm slug={site.slug} styles={FORM_STYLE} />
         </div>
       </div>
     </section>

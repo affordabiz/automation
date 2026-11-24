@@ -1,57 +1,11 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { cleanDisclaimers, RefundOffers } from "../shared/RefundOffers";
 import type { TemplateProps } from "../types";
 import { container, display, section } from "./theme";
 
-/** Bold key words and dollar amounts, as on the Refund Advantage artwork. */
-const EMPHASIS = /(\bTaxpayer\b|\bRefund\b|\$[\d,]+(?:\.\d+)?)/gi;
-
-function emphasize(text: string): ReactNode[] {
-  return text.split(EMPHASIS).map((part, i) =>
-    i % 2 === 1 ? (
-      <strong key={i} className="font-extrabold">
-        {part}
-      </strong>
-    ) : (
-      part
-    ),
-  );
-}
-
-function HandPercentIcon() {
-  return (
-    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden className="size-16 sm:size-20">
-      <circle cx="34" cy="20" r="13" strokeDasharray="5 4" />
-      <path d="M29 26l10-12" />
-      <circle cx="29.5" cy="15.5" r="2" />
-      <circle cx="38.5" cy="24.5" r="2" />
-      <path d="M6 48l9-8c2-2 5-3 8-3h12a3.5 3.5 0 010 7H26" />
-      <path d="M35 44l12-7a4 4 0 014 6.5L38 53c-2 1.5-4 2-6.5 2H16l-6 4" />
-    </svg>
-  );
-}
-
-function CyclePercentIcon() {
-  return (
-    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden className="size-16 sm:size-20">
-      <circle cx="32" cy="32" r="13" strokeDasharray="5 4" />
-      <path d="M27 38l10-12" />
-      <circle cx="27.5" cy="27.5" r="2" />
-      <circle cx="36.5" cy="36.5" r="2" />
-      <path d="M12 26a21 21 0 0134-12" />
-      <path d="M46 6v8h-8" />
-      <path d="M52 38a21 21 0 01-34 12" />
-      <path d="M18 58v-8h8" />
-    </svg>
-  );
-}
-
-const ICONS = [HandPercentIcon, CyclePercentIcon];
-
 export function Loans({ copy }: TemplateProps) {
   const { loans } = copy;
-  // Numbers are added by the list, so drop any typed "1." prefix.
-  const disclaimers = loans.disclaimers.map((d) => d.replace(/^\s*\d+[.)]\s*/, "").trim()).filter(Boolean);
+  const disclaimers = cleanDisclaimers(loans.disclaimers);
   return (
     <section id="cash-advance" className={`${section} relative overflow-hidden bg-(--t1-teal) text-white`}>
       <div aria-hidden className="pointer-events-none absolute -left-40 top-1/3 size-[30rem] rounded-full bg-(--t1-orange)/10 blur-3xl" />
@@ -92,26 +46,7 @@ export function Loans({ copy }: TemplateProps) {
                 <p className={`${display} text-3xl font-bold italic text-(--t1-crimson)`}>{loans.partnerName}</p>
               )}
             </div>
-
-            <div className="flex-1 rounded-[2rem] bg-(--t1-crimson) px-6 py-10 shadow-xl sm:px-10">
-              <div className="grid h-full gap-10 sm:grid-cols-2 sm:gap-0 sm:divide-x sm:divide-white/40">
-                {loans.cards.map((c, i) => {
-                  const Icon = ICONS[i % ICONS.length];
-                  return (
-                    <article
-                      key={c.title}
-                      className="flex flex-col items-center text-center sm:px-6 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-white/30 [&:not(:first-child)]:pt-10 sm:[&:not(:first-child)]:border-t-0 sm:[&:not(:first-child)]:pt-0"
-                    >
-                      <span className="text-(--t1-gold)">
-                        <Icon />
-                      </span>
-                      <h3 className="mt-6 text-xl leading-snug font-normal uppercase sm:text-2xl">{emphasize(c.title)}</h3>
-                      <p className="mt-3 text-base leading-snug uppercase text-white/95 sm:text-lg">{emphasize(c.detail)}</p>
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
+            <RefundOffers cards={loans.cards} className="flex-1" />
           </div>
         </div>
 

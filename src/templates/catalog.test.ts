@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { TEMPLATE_CATALOG, getTemplateMeta, isLiveTemplate } from "./catalog";
 import { getDefaultCopy } from "./defaults";
-
 describe("catalog", () => {
   it("has 7 templates numbered 1..7", () => {
     expect(TEMPLATE_CATALOG.map((t) => t.number)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
-  it("only template 1 is live in v1", () => {
+  it("templates 1 and 2 are live", () => {
     expect(isLiveTemplate(1)).toBe(true);
-    expect(isLiveTemplate(2)).toBe(false);
+    expect(isLiveTemplate(2)).toBe(true);
+    expect(isLiveTemplate(3)).toBe(false);
     expect(isLiveTemplate(99)).toBe(false);
     expect(getTemplateMeta(1)?.name).toBe("Template 1");
   });

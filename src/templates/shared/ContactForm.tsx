@@ -3,14 +3,23 @@
 import { useRef, useState, type FormEvent } from "react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { CircleCheck, Send } from "lucide-react";
-import { btnPrimary } from "./theme";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-const field =
-  "w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-base text-slate-800 ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--t1-orange) sm:text-[0.95rem]";
+/** Per-template styling and field wording for the shared contact form. */
+export interface ContactFormStyle {
+  field: string;
+  button: string;
+  success: string;
+  successIcon: string;
+  /** Placeholder text per field, matching each template's reference. Omit `phone` to hide that field. */
+  labels?: { name: string; email: string; phone?: string; message: string; submit: string };
+}
 
-export function ContactForm({ slug }: { slug: string | null }) {
+const DEFAULT_LABELS = { name: "Full Name", email: "Email Address", phone: "Phone", message: "Message", submit: "Submit" };
+
+export function ContactForm({ slug, styles }: { slug: string | null; styles: ContactFormStyle }) {
+  const labels = styles.labels ?? DEFAULT_LABELS;
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState("");
@@ -50,35 +59,38 @@ export function ContactForm({ slug }: { slug: string | null }) {
 
   if (status === "sent") {
     return (
-      <p role="status" className="flex flex-col items-center gap-3 rounded-2xl bg-(--t1-mint) p-8 text-center text-lg font-semibold text-(--t1-teal)">
-        <CircleCheck className="size-10 text-(--t1-orange)" aria-hidden />
+      <p role="status" className={styles.success}>
+        <CircleCheck className={styles.successIcon} aria-hidden />
         Thanks! Your message has been sent.
       </p>
     );
   }
 
+  const field = styles.field;
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <input name="name" required maxLength={100} placeholder="Full Name" aria-label="Full Name" className={field} />
+        <input name="name" required maxLength={100} placeholder={labels.name} aria-label={labels.name} className={field} />
         <input
           name="email"
           type="email"
           required
           maxLength={254}
-          placeholder="Email Address"
-          aria-label="Email Address"
+          placeholder={labels.email}
+          aria-label={labels.email}
           className={field}
         />
       </div>
-      <input name="phone" type="tel" maxLength={30} placeholder="Phone" aria-label="Phone" className={field} />
+      {labels.phone && (
+        <input name="phone" type="tel" maxLength={30} placeholder={labels.phone} aria-label={labels.phone} className={field} />
+      )}
       <textarea
         name="message"
         required
         maxLength={5000}
         rows={5}
-        placeholder="Message"
-        aria-label="Message"
+        placeholder={labels.message}
+        aria-label={labels.message}
         className={field}
       />
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
@@ -101,9 +113,9 @@ export function ContactForm({ slug }: { slug: string | null }) {
       <button
         type="submit"
         disabled={!slug || !token || status === "sending"}
-        className={`${btnPrimary} w-full disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-10`}
+        className={`${styles.button} w-full disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-10`}
       >
-        {status === "sending" ? "Sending…" : "Submit"}
+        {status === "sending" ? "Sending…" : labels.submit}
         <Send className="size-4" aria-hidden />
       </button>
     </form>

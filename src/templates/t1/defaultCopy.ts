@@ -34,6 +34,7 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
     "Peace of Mind",
     "Convenience with Mobile & Drop-Off Services",
   ],
+  highlightsHeading: "Why Us?",
   intro: {
     heading: "Contact our tax professionals today.",
     cards: [
@@ -129,6 +130,8 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
     },
   },
   loans: {
+    heading: "$250-$7,500 Cash Advance",
+    subheading: "",
     promoLines: ["Pre-Pack Loans", "Are Here!"],
     promoBadge: "Available Starting January 2",
     // Self-hosted partner logo; clear it in Studio to show a text wordmark instead.

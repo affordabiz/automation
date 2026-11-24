@@ -2,72 +2,13 @@
 
 import Image from "next/image";
 import { ArrowUpRight, Mail, Menu, Phone, PlayCircle, X } from "lucide-react";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { lockScroll, scrollToHash } from "@/lib/smoothScroll";
+import { useSiteHeader, visibleButtons } from "../shared/useSiteHeader";
 import type { TemplateProps } from "../types";
 import { btnPrimary, container, display, externalProps, isExternal, telHref } from "./theme";
 
-const isHash = (url: string) => url.startsWith("#") && url.length > 1;
-
 export function Header({ site, copy }: TemplateProps) {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("");
-  const panelRef = useRef<HTMLDivElement>(null);
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  // "Hiree Signup" was removed from this template on request; older CMS copy still lists it.
-  const buttons = copy.headerButtons.filter(
-    (b) => b.label.trim() && b.url.trim() && !/hiree\s*sign\s*-?\s*up/i.test(b.label),
-  );
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Highlights the menu item for the section currently on screen.
-  useEffect(() => {
-    const targets = copy.nav
-      .filter((l) => isHash(l.url))
-      .map((l) => document.querySelector<HTMLElement>(l.url))
-      .filter((el): el is HTMLElement => el !== null);
-    if (targets.length === 0) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(`#${e.target.id}`);
-      },
-      { rootMargin: "-45% 0px -50% 0px" },
-    );
-    targets.forEach((t) => observer.observe(t));
-    return () => observer.disconnect();
-  }, [copy.nav]);
-
-  useEffect(() => {
-    if (!open) return;
-    const toggle = toggleRef.current;
-    lockScroll(true);
-    panelRef.current?.querySelector<HTMLElement>("a,button")?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    const onResize = () => window.innerWidth >= 1280 && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("resize", onResize);
-    return () => {
-      lockScroll(false);
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("resize", onResize);
-      toggle?.focus();
-    };
-  }, [open]);
-
-  function go(e: MouseEvent<HTMLAnchorElement>, url: string) {
-    if (!isHash(url)) return;
-    e.preventDefault();
-    setOpen(false);
-    lockScroll(false);
-    scrollToHash(url);
-  }
+  const { open, setOpen, scrolled, active, go, panelRef, toggleRef } = useSiteHeader(copy.nav);
+  const buttons = visibleButtons(copy.headerButtons);
 
   return (
     <>

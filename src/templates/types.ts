@@ -34,6 +34,8 @@ export interface TemplateCopy {
     notes: string[];
   };
   highlights: string[];
+  /** Heading above the highlights list (Template 2 "Why Us?"). */
+  highlightsHeading: string;
   intro: { heading: string; cards: { body: string }[] };
   services: { heading: string; ctaLabel: string; items: { title: string; body: string }[] };
   faq: { heading: string; items: { question: string; answer: string }[] };
@@ -43,6 +45,8 @@ export interface TemplateCopy {
     portalLink: LinkItem;
   };
   loans: {
+    heading: string;
+    subheading: string;
     promoLines: string[];
     promoBadge: string;
     partnerLogoUrl: string;
