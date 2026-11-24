@@ -141,9 +141,11 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
         detail: "36% APR on loans between $1,250 to $7,500",
       },
     ],
-    // Items 2-4 still need their verbatim text from the reference page.
     disclaimers: [
       "The Refund Transfer is an optional tax refund-related product offered by Pathward®, N.A., Member FDIC. The Refund Transfer is not a loan. E-filing of tax return is required to be eligible for the product. Subject to approval. Fees apply. See terms and conditions for details.",
+      "The Refund Advance is an optional tax-refund related loan provided by Pathward®, N.A., Member FDIC (it is not the actual tax refund) at participating locations. Program availability and loan amounts may vary based on state and software provider. The amount of the loan and applicable interest will be deducted from tax refunds and reduce the amount that is paid directly to the taxpayer. Fees for other optional products or product features may apply. Tax returns may be filed electronically without applying for this loan. Loans offered in amounts of $250 (where available), $500, $1,000, 25%, 50%, or 75% of your expected tax refund up to $7,500, with interest-based applicants receiving an average of $2,157.45; $7,500 available only to well-qualified applicants with a minimum expected tax refund of $10,592. Underwriting standards subject to change. When calculating the amount of your loan, the amount of your “expected” tax refund may be affected by any refundable tax credits and fees. Loans in the amounts of $250, $500, and $1,000 have an Annual Percentage Rate (APR) of 0.00%. Loans in the amounts of 25%, 50% or 75% of your expected tax refund have an APR of 36.0% with a minimum loan of $1,250. For example, $2,500 loan representing 50% of expected refund borrowed over 33 day term, total amount payable in a single payment is $2,581.37 including interest. Availability is subject to satisfaction of identity verification, eligibility criteria, and underwriting standards.",
+      "Certain Refund Advance Loans are available at no cost to tax preparers and taxpayers and Pre-Acknowledgement Loans (approved prior to IRS Acknowledgement) have a $60 or $100 Marketing Fee.",
+      "The FasterMoney Visa® Prepaid Card is issued by Pathward®, N.A., Member FDIC.",
     ],
   },
   cta: { heading: "Ready To Get Started?", buttonLabel: "Schedule a Free Consultation" },

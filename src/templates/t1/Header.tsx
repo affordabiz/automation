@@ -15,7 +15,10 @@ export function Header({ site, copy }: TemplateProps) {
   const [active, setActive] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-  const buttons = copy.headerButtons.filter((b) => b.label.trim() && b.url.trim());
+  // "Hiree Signup" was removed from this template on request; older CMS copy still lists it.
+  const buttons = copy.headerButtons.filter(
+    (b) => b.label.trim() && b.url.trim() && !/hiree\s*sign\s*-?\s*up/i.test(b.label),
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -86,7 +89,7 @@ export function Header({ site, copy }: TemplateProps) {
             alt={`${site.businessName} logo`}
             width={160}
             height={56}
-            className="h-11 w-auto max-w-[9rem] shrink-0 object-contain sm:h-12 sm:max-w-[11rem]"
+            className="h-12 w-auto max-w-[9rem] shrink-0 object-contain sm:h-14 sm:max-w-[11rem]"
           />
           <span className={`${display} hidden min-w-0 flex-col leading-tight sm:flex`}>
             <span className="truncate text-[1.05rem] font-bold text-(--t1-ink)">{site.businessName}</span>

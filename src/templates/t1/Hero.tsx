@@ -16,8 +16,10 @@ export function Hero({ site, copy }: TemplateProps) {
 
       <div className={`${container} relative grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:py-28`}>
         <div className="min-w-0">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-(--t1-orange) ring-1 ring-inset ring-white/15 backdrop-blur">
-            <Sparkles className="size-4" aria-hidden />
+          <p
+            className={`${display} inline-flex items-center gap-2.5 rounded-full bg-white/10 px-5 py-2.5 text-lg font-bold text-(--t1-orange) ring-1 ring-inset ring-(--t1-orange)/40 backdrop-blur sm:px-6 sm:py-3 sm:text-2xl`}
+          >
+            <Sparkles className="size-5 sm:size-6" aria-hidden />
             {hero.eyebrow}
           </p>
           <h1

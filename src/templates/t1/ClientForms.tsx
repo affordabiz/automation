@@ -25,7 +25,7 @@ export function ClientForms({ copy }: TemplateProps) {
                       key={l.label}
                       href={l.url}
                       {...externalProps(l.url)}
-                      className="group flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-(--t1-mint) px-5 py-3 font-semibold text-(--t1-teal) transition duration-200 hover:bg-(--t1-orange) hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--t1-orange)"
+                      className="group flex min-h-14 items-center justify-between gap-3 rounded-2xl bg-(--t1-orange) px-5 py-3 font-semibold text-white shadow-[0_10px_24px_-12px_rgba(247,147,30,0.9)] transition duration-200 hover:-translate-y-0.5 hover:bg-(--t1-orange-deep) hover:shadow-[0_14px_28px_-12px_rgba(224,123,0,0.9)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--t1-orange)"
                     >
                       {l.label}
                       <ArrowUpRight className="size-5 shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
