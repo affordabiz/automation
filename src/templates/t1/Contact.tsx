@@ -1,37 +1,53 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { BadgeCheck, Mail, MapPin, Phone } from "lucide-react";
 import type { TemplateProps } from "../types";
 import { ContactForm } from "./ContactForm";
-import { container, display, telHref } from "./theme";
+import { container, h2, section, telHref } from "./theme";
 
 export function Contact({ site, copy }: TemplateProps) {
+  const rows = [
+    { icon: Phone, label: site.phone, href: telHref(site.phone) },
+    { icon: Mail, label: site.email, href: `mailto:${site.email}` },
+    { icon: MapPin, label: site.address, href: null },
+  ];
   return (
-    <section id="contact" className="scroll-mt-20 bg-(--t1-teal) py-20 text-white lg:py-28">
-      <div className={`${container} grid gap-12 lg:grid-cols-2`}>
-        <div>
-          <h2 className={`${display} text-4xl font-semibold text-(--t1-orange) sm:text-5xl`}>{copy.contact.heading}</h2>
-          <p className="mt-4 text-white/85">{copy.contact.intro}</p>
-          <p className="mt-8 font-semibold">{copy.contact.credentialLine}</p>
-          <p className="mt-1 text-white/75">{copy.hero.servingLine}</p>
-          <ul className="mt-6 space-y-3 text-sm">
-            <li>
-              <a href={telHref(site.phone)} className="flex items-center gap-3 hover:text-(--t1-orange)">
-                <Phone className="size-4" aria-hidden />
-                {site.phone}
-              </a>
-            </li>
-            <li>
-              <a href={`mailto:${site.email}`} className="flex items-center gap-3 break-all hover:text-(--t1-orange)">
-                <Mail className="size-4 shrink-0" aria-hidden />
-                {site.email}
-              </a>
-            </li>
-            <li className="flex items-start gap-3 text-white/80">
-              <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden />
-              {site.address}
-            </li>
+    <section id="contact" className={`${section} relative overflow-hidden bg-(--t1-teal) text-white`}>
+      <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 size-[32rem] rounded-full bg-(--t1-orange)/15 blur-3xl" />
+      <div className={`${container} relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16`}>
+        <div className="min-w-0">
+          <h2 className={`${h2} text-(--t1-orange)`}>{copy.contact.heading}</h2>
+          <p className="mt-5 max-w-md text-lg leading-relaxed text-white/85">{copy.contact.intro}</p>
+          <div className="mt-9 flex items-start gap-3">
+            <BadgeCheck className="mt-0.5 size-6 shrink-0 text-(--t1-orange)" aria-hidden />
+            <div>
+              <p className="text-lg font-semibold">{copy.contact.credentialLine}</p>
+              <p className="mt-1 text-white/70">{copy.hero.servingLine}</p>
+            </div>
+          </div>
+          <ul className="mt-8 space-y-3">
+            {rows.map(({ icon: Icon, label, href }) => {
+              const inner = (
+                <>
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/10 text-(--t1-orange) transition group-hover:bg-(--t1-orange) group-hover:text-white">
+                    <Icon className="size-5" aria-hidden />
+                  </span>
+                  <span className="min-w-0 break-words">{label}</span>
+                </>
+              );
+              return (
+                <li key={label}>
+                  {href ? (
+                    <a href={href} className="group flex items-center gap-4 font-medium transition hover:text-(--t1-orange)">
+                      {inner}
+                    </a>
+                  ) : (
+                    <p className="group flex items-center gap-4 text-white/85">{inner}</p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
-        <div className="rounded-3xl bg-white/[0.06] p-6 ring-1 ring-white/15 sm:p-8">
+        <div className="min-w-0 rounded-[2rem] bg-white p-6 text-slate-800 shadow-2xl sm:p-9">
           <ContactForm slug={site.slug} />
         </div>
       </div>

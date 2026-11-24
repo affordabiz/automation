@@ -14,10 +14,10 @@ async function Shell({ children }: { children: React.ReactNode }) {
   const member = await requireMember();
   return (
     <div className="lg:flex lg:min-h-screen">
-      <aside className="bg-teal-950 px-4 py-4 text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:flex-col lg:py-6">
-        <p className="mb-3 px-3 text-lg font-bold tracking-tight lg:mb-6">Affordabiz</p>
+      <aside className="bg-teal-950 px-4 py-4 text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-52 lg:shrink-0 lg:flex-col lg:px-3 lg:py-5">
+        <p className="mb-3 px-3 text-lg font-bold tracking-tight lg:mb-5">Affordabiz</p>
         <AdminNav isOwner={member.isOwner} permissions={[...member.permissions]} />
-        <div className="mt-3 flex items-center justify-between gap-2 border-t border-white/10 px-3 pt-3 lg:mt-auto">
+        <div className="mt-3 flex items-center justify-between gap-2 border-t border-white/10 px-2 pt-3 lg:mt-auto">
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{member.fullName}</p>
             <p className="truncate text-xs text-teal-100/70">{member.roleName}</p>

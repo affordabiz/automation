@@ -11,7 +11,7 @@ export function sampleSite(templateNumber: number): SiteData {
     phone: "(404) 111-2222",
     address: "Atlanta, GA",
     servingArea: "Atlanta & Surrounding States",
-    logoUrl: "/samples/logo.svg",
-    photoUrl: "/samples/photo.svg",
+    logoUrl: "/samples/logo-icon.svg",
+    photoUrl: "/templates/t1/professional.jpg",
   };
 }

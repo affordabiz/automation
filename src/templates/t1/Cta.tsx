@@ -1,14 +1,26 @@
+import { ArrowRight, Phone } from "lucide-react";
 import type { TemplateProps } from "../types";
-import { btnPrimary, container, display } from "./theme";
+import { btnArrow, btnOutlineTeal, btnPrimary, container, h2, telHref } from "./theme";
 
-export function Cta({ copy }: TemplateProps) {
+export function Cta({ site, copy }: TemplateProps) {
   return (
-    <section className="bg-white py-20">
-      <div className={`${container} flex flex-col items-center text-center`}>
-        <h2 className={`${display} text-4xl font-semibold text-(--t1-teal-deep) sm:text-5xl`}>{copy.cta.heading}</h2>
-        <a href="#contact" className={`${btnPrimary} mt-8`}>
-          {copy.cta.buttonLabel}
-        </a>
+    <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <div className={container}>
+        <div className="relative overflow-hidden rounded-[2rem] bg-(--t1-mint) px-6 py-14 text-center sm:px-12 lg:py-20">
+          <div aria-hidden className="absolute -right-24 -top-24 size-72 rounded-full bg-(--t1-orange)/15 blur-2xl" />
+          <div aria-hidden className="absolute -bottom-24 -left-24 size-72 rounded-full bg-(--t1-teal)/10 blur-2xl" />
+          <h2 className={`${h2} relative text-(--t1-ink)`}>{copy.cta.heading}</h2>
+          <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a href="#contact" className={btnPrimary}>
+              {copy.cta.buttonLabel}
+              <ArrowRight className={btnArrow} aria-hidden />
+            </a>
+            <a href={telHref(site.phone)} className={btnOutlineTeal}>
+              <Phone className="size-4" aria-hidden />
+              {site.phone}
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );

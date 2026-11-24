@@ -14,13 +14,7 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
     { label: "Cash Advance", url: "#cash-advance" },
     { label: "Contact", url: "#contact" },
   ],
-  headerButtons: [
-    { label: "Hiree Video", url: "https://www.taxbizinbox.com/video/" },
-    {
-      label: "Hiree Signup",
-      url: "https://trainings.affordataxbizbox.com/bundles/2026-new-ptin-partners-ahs-hirees?th__ug=f93fa8ea",
-    },
-  ],
+  headerButtons: [{ label: "Hiree Video", url: "https://www.taxbizinbox.com/video/" }],
   hero: {
     eyebrow: "$250-$7,500 Cash Advance",
     title: "{{businessName}}",
@@ -137,8 +131,8 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
   loans: {
     promoLines: ["Pre-Pack Loans", "Are Here!"],
     promoBadge: "Available Starting January 2",
-    // Leave empty to show a text wordmark; paste a self-hosted logo URL in Studio to use an image.
-    partnerLogoUrl: "",
+    // Self-hosted partner logo; clear it in Studio to show a text wordmark instead.
+    partnerLogoUrl: "/templates/t1/refund-advantage.jpg",
     partnerName: "Refund Advantage",
     cards: [
       { title: "No-Cost Taxpayer Refund Advance Loans", detail: "Loans of $250, $500, & $1,000" },
@@ -147,7 +141,10 @@ export const T1_DEFAULT_COPY: TemplateCopy = {
         detail: "36% APR on loans between $1,250 to $7,500",
       },
     ],
-    disclaimers: [],
+    // Items 2-4 still need their verbatim text from the reference page.
+    disclaimers: [
+      "The Refund Transfer is an optional tax refund-related product offered by Pathward®, N.A., Member FDIC. The Refund Transfer is not a loan. E-filing of tax return is required to be eligible for the product. Subject to approval. Fees apply. See terms and conditions for details.",
+    ],
   },
   cta: { heading: "Ready To Get Started?", buttonLabel: "Schedule a Free Consultation" },
   contact: {
