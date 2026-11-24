@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, Menu, PlayCircle, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useSiteHeader, visibleButtons } from "../shared/useSiteHeader";
 import type { TemplateProps } from "../types";
-import { btnTan, container, display, externalProps, isExternal } from "./theme";
+import { display, externalProps, isExternal, navFont } from "./theme";
 
 export function Header({ site, copy }: TemplateProps) {
   const { open, setOpen, scrolled, active, go, panelRef, toggleRef } = useSiteHeader(copy.nav);
@@ -13,61 +13,59 @@ export function Header({ site, copy }: TemplateProps) {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 bg-(--t2-navy)/95 text-white backdrop-blur-md transition-shadow duration-300 ${
-          scrolled ? "shadow-[0_10px_30px_-12px_rgba(0,0,0,0.5)]" : ""
+        className={`sticky top-0 z-50 bg-(--t2-sage) text-white transition-shadow duration-300 ${
+          scrolled ? "shadow-[0_8px_24px_-12px_rgba(0,0,0,0.45)]" : ""
         }`}
       >
-        <div className={`${container} flex h-[72px] items-center gap-4 lg:h-20`}>
+        <div className="flex h-[72px] items-stretch pl-5 sm:pl-8 lg:h-24 lg:pl-[3.8%]">
           <a
             href="#home"
             onClick={(e) => go(e, "#home")}
-            className="flex min-w-0 items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--t2-tan)"
+            className="flex shrink-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
-            <span className="grid shrink-0 place-items-center rounded-xl bg-white p-1">
-              <Image
-                unoptimized
-                priority
-                src={site.logoUrl}
-                alt={`${site.businessName} logo`}
-                width={160}
-                height={56}
-                className="h-10 w-auto max-w-[8.5rem] object-contain sm:h-11 sm:max-w-[10rem]"
-              />
-            </span>
+            <Image
+              unoptimized
+              priority
+              src={site.logoUrl}
+              alt={`${site.businessName} logo`}
+              width={216}
+              height={56}
+              className="h-10 w-auto max-w-[10rem] object-contain lg:h-14 lg:max-w-[13.5rem]"
+            />
           </a>
 
-          <nav aria-label="Primary" className="ml-auto hidden items-center gap-1 xl:flex">
-            {copy.nav.map((l) => {
-              const current = active === l.url;
-              return (
-                <a
-                  key={l.url + l.label}
-                  href={l.url}
-                  onClick={(e) => go(e, l.url)}
-                  aria-current={current ? "true" : undefined}
-                  {...externalProps(l.url)}
-                  className={`rounded-full px-3.5 py-2 text-[0.8rem] font-bold uppercase tracking-[0.12em] transition-colors ${
-                    current ? "bg-white/10 text-(--t2-tan)" : "text-white/80 hover:text-(--t2-tan)"
-                  }`}
-                >
-                  {l.label}
-                </a>
-              );
-            })}
-          </nav>
-
-          <div className="ml-auto flex items-center gap-2 xl:ml-4">
-            {buttons.map((b) => (
+          <nav aria-label="Primary" className={`${navFont} ml-8 hidden items-center gap-6 xl:flex`}>
+            {copy.nav.map((l) => (
               <a
-                key={b.url + b.label}
-                href={b.url}
-                {...externalProps(b.url)}
-                className={`${btnTan} min-h-11! px-5! py-2.5! text-sm! max-md:hidden`}
+                key={l.url + l.label}
+                href={l.url}
+                onClick={(e) => go(e, l.url)}
+                aria-current={active === l.url ? "true" : undefined}
+                {...externalProps(l.url)}
+                className={`text-base font-bold tracking-[2px] uppercase transition-opacity ${
+                  active === l.url ? "opacity-100" : "opacity-95 hover:opacity-70"
+                }`}
               >
-                <PlayCircle className="size-4" aria-hidden />
-                {b.label}
+                {l.label}
               </a>
             ))}
+          </nav>
+
+          <div className="ml-auto flex items-stretch">
+            {buttons.length > 0 && (
+              <div className="hidden items-stretch bg-(--t2-navy) px-3 md:flex lg:px-5">
+                {buttons.map((b) => (
+                  <a
+                    key={b.url + b.label}
+                    href={b.url}
+                    {...externalProps(b.url)}
+                    className={`${display} flex w-24 items-center justify-center px-2 text-center text-[1.05rem] leading-[0.9] font-black whitespace-pre-line text-white transition hover:text-(--t2-tan) lg:w-[6.5rem]`}
+                  >
+                    {b.label.replace(" ", "\n")}
+                  </a>
+                ))}
+              </div>
+            )}
             <button
               ref={toggleRef}
               type="button"
@@ -75,22 +73,22 @@ export function Header({ site, copy }: TemplateProps) {
               aria-expanded={open}
               aria-controls="t2-mobile-menu"
               aria-label="Open menu"
-              className="grid size-11 place-items-center rounded-full bg-(--t2-tan) text-(--t2-navy) transition hover:bg-white xl:hidden"
+              className="grid w-[72px] place-items-center bg-(--t2-navy) text-white transition hover:bg-black md:ml-px xl:hidden"
             >
-              <Menu className="size-5" aria-hidden />
+              <Menu className="size-6" aria-hidden />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Kept outside the header: its backdrop blur would trap a fixed panel. */}
+      {/* Kept outside the header so the fixed panel covers the whole screen. */}
       <div className={`fixed inset-0 z-[60] xl:hidden ${open ? "visible" : "invisible"}`} aria-hidden={!open} inert={!open}>
         <button
           type="button"
           tabIndex={-1}
           aria-label="Close menu"
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-(--t2-navy-deep)/60 backdrop-blur-sm transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
         />
         <div
           ref={panelRef}
@@ -99,31 +97,29 @@ export function Header({ site, copy }: TemplateProps) {
           aria-modal="true"
           aria-label="Menu"
           data-lenis-prevent
-          className={`absolute inset-y-0 right-0 flex w-full max-w-sm flex-col overflow-y-auto bg-(--t2-cream) shadow-2xl transition-transform duration-300 ease-out ${
+          className={`absolute inset-y-0 right-0 flex w-full max-w-sm flex-col overflow-y-auto bg-(--t2-navy) text-white shadow-2xl transition-transform duration-300 ease-out ${
             open ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="flex h-[72px] shrink-0 items-center justify-between bg-(--t2-navy) px-5 text-white">
-            <span className="grid shrink-0 place-items-center rounded-xl bg-white p-1">
-              <Image
-                unoptimized
-                src={site.logoUrl}
-                alt={`${site.businessName} logo`}
-                width={140}
-                height={48}
-                className="h-10 w-auto max-w-[8.5rem] object-contain"
-              />
-            </span>
+          <div className="flex h-[72px] shrink-0 items-center justify-between bg-(--t2-sage) pl-5">
+            <Image
+              unoptimized
+              src={site.logoUrl}
+              alt={`${site.businessName} logo`}
+              width={160}
+              height={42}
+              className="h-10 w-auto max-w-[10rem] object-contain"
+            />
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="grid size-11 shrink-0 place-items-center rounded-full bg-white/10 transition hover:bg-white/20"
+              className="grid h-full w-[72px] place-items-center bg-(--t2-navy) transition hover:bg-black"
             >
-              <X className="size-5" aria-hidden />
+              <X className="size-6" aria-hidden />
             </button>
           </div>
-          <nav aria-label="Mobile" className="flex flex-col px-3 py-4">
+          <nav aria-label="Mobile" className={`${navFont} flex flex-col py-3`}>
             {copy.nav.map((l, i) => (
               <a
                 key={l.url + l.label}
@@ -131,23 +127,29 @@ export function Header({ site, copy }: TemplateProps) {
                 onClick={(e) => go(e, l.url)}
                 {...externalProps(l.url)}
                 style={{ transitionDelay: open ? `${80 + i * 35}ms` : "0ms" }}
-                className={`${display} flex items-center justify-between rounded-xl px-4 py-3 text-[1.7rem] leading-none font-black uppercase transition-all duration-300 hover:bg-(--t2-mint)/50 ${
-                  active === l.url ? "text-(--t2-navy) underline decoration-(--t2-tan) decoration-4 underline-offset-8" : "text-(--t2-navy)"
+                className={`flex items-center justify-between border-b border-white/10 px-6 py-4 text-base font-bold tracking-[2px] uppercase transition-all duration-300 hover:bg-white/5 ${
+                  active === l.url ? "text-(--t2-tan)" : "text-white"
                 } ${open ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"}`}
               >
                 {l.label}
-                {isExternal(l.url) && <ArrowUpRight className="size-5 text-slate-400" aria-hidden />}
+                {isExternal(l.url) && <ArrowUpRight className="size-5 opacity-60" aria-hidden />}
               </a>
             ))}
           </nav>
-          <div className="mt-auto space-y-3 border-t border-(--t2-navy)/10 p-5">
-            {buttons.map((b) => (
-              <a key={b.url + b.label} href={b.url} {...externalProps(b.url)} className={`${btnTan} w-full`}>
-                <PlayCircle className="size-4" aria-hidden />
-                {b.label}
-              </a>
-            ))}
-          </div>
+          {buttons.length > 0 && (
+            <div className="mt-auto grid grid-cols-2 gap-px bg-white/10">
+              {buttons.map((b) => (
+                <a
+                  key={b.url + b.label}
+                  href={b.url}
+                  {...externalProps(b.url)}
+                  className={`${display} grid min-h-20 place-items-center bg-(--t2-navy) px-3 text-center text-lg leading-[0.95] font-black whitespace-pre-line transition hover:bg-black hover:text-(--t2-tan)`}
+                >
+                  {b.label.replace(" ", "\n")}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </>

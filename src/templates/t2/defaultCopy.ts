@@ -25,15 +25,21 @@ const DEDUCTIONS = [
 /** Verbatim copy from the Template 2 reference page (taxprep.me/template-2). Do not reword. */
 export const T2_DEFAULT_COPY: TemplateCopy = {
   nav: [
-    { label: "HOME", url: "#home" },
-    { label: "ABOUT", url: "#about" },
-    { label: "SERVICES", url: "#services" },
-    { label: "FAQ’S", url: "#faq" },
-    { label: "CLIENT FORM", url: "#forms" },
-    { label: "CASH ADVANCE", url: "#cash-advance" },
-    { label: "CONTACT", url: "#contact" },
+    { label: "Home", url: "#home" },
+    { label: "Services", url: "#services" },
+    { label: "Why Us", url: "#why-us" },
+    { label: "Client Forms", url: "#forms" },
+    { label: "FAQ", url: "#faq" },
+    { label: "Cash Advance", url: "#cash-advance" },
+    { label: "Contact", url: "#contact" },
   ],
-  headerButtons: [{ label: "Hiree Video", url: "https://www.taxbizinbox.com/video/" }],
+  headerButtons: [
+    { label: "HIREE VIDEO", url: "https://www.taxbizinbox.com/video/" },
+    {
+      label: "HIREE SIGNUP",
+      url: "https://trainings.affordataxbizbox.com/bundles/2026-new-ptin-partners-ahs-hirees?th__ug=f93fa8ea",
+    },
+  ],
   hero: {
     eyebrow: "$250-$7,500 Cash Advance",
     title: "{{businessName}}",
@@ -183,14 +189,14 @@ export const T2_DEFAULT_COPY: TemplateCopy = {
     heading: "Client Forms",
     groups: [
       {
-        heading: "Documents That Clients Need To Provide To Tax Professional",
+        heading: "Documents That Clients Need\nTo Provide To Tax Professional",
         links: [
           { label: "CLIENT IN-TAKE FORM", url: "https://www.taxprep.me/intake" },
           { label: "Client Document Checklist", url: CHECKLIST_URL },
         ],
       },
       {
-        heading: "Compliance Docs For Clients To Sign After Returns Are Completed",
+        heading: "Compliance Docs For Clients\nTo Sign After Returns Are Completed",
         links: [
           { label: "EIC VALIDATION FORM", url: "https://www.taxprep.me/intake/" },
           { label: "SCHEDULE C (SELF-EMPLOYMENT) VALIDATION FORM", url: "https://www.taxprep.me/intake/" },

@@ -1,69 +1,86 @@
 import Image from "next/image";
-import { Mail, MapPin, Phone, UserRound } from "lucide-react";
+import type { ReactNode } from "react";
 import { ContactForm, type ContactFormStyle } from "../shared/ContactForm";
 import type { TemplateProps } from "../types";
-import { btnNavy, container, display, section, telHref } from "./theme";
+import { btnNavy, container, display, openSans, telHref } from "./theme";
+
+/** Coins photo under a cream wash; the cream alone shows if the photo is missing. */
+const CONTACT_BG =
+  "bg-(--t2-cream) bg-[linear-gradient(180deg,rgba(249,243,232,0.85)_0%,rgba(249,243,232,0.9)_100%),url('/templates/t2/coins.jpg')] bg-cover bg-center";
 
 const FORM_STYLE: ContactFormStyle = {
   field:
-    "w-full rounded-xl border-0 bg-(--t2-cream) px-4 py-3.5 text-base text-slate-800 ring-1 ring-inset ring-(--t2-navy)/10 transition placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--t2-navy) sm:text-[0.95rem]",
-  button: btnNavy,
-  success:
-    "flex flex-col items-center gap-3 rounded-2xl bg-(--t2-mint) p-8 text-center text-lg font-semibold text-(--t2-navy)",
+    "w-full border-0 bg-white px-4 py-4 text-sm font-medium text-slate-800 placeholder:text-[#999] focus:outline-2 focus:outline-(--t2-navy) font-(family-name:--t2-font-display)",
+  button: `${btnNavy} min-w-32`,
+  success: "flex flex-col items-center gap-3 bg-white p-8 text-center text-lg font-bold text-(--t2-navy)",
   successIcon: "size-10 text-(--t2-navy)",
   labels: { name: "Name", email: "Email Address", message: "Message", submit: "Submit" },
 };
 
+const SITE_HOME = "https://taxprep.me/";
+const BRAND = "TaxPrep.me";
+
+/** Links each "TaxPrep.me" in the footer text, as the reference does. */
+function linkBrand(text: string): ReactNode[] {
+  return text.split(BRAND).flatMap((part, i) =>
+    i === 0
+      ? [part]
+      : [
+          <a key={i} href={SITE_HOME} target="_blank" rel="noopener noreferrer" className="text-[#2ea3f2] hover:underline">
+            {BRAND}
+          </a>,
+          part,
+        ],
+  );
+}
+
 export function Contact({ site, copy }: TemplateProps) {
   const rows = [
-    { icon: UserRound, label: site.fullName, value: copy.contact.credentialLine, href: null },
-    { icon: MapPin, label: "Serving Areas", value: copy.hero.servingLine, href: null },
-    { icon: Mail, label: "Email", value: site.email, href: `mailto:${site.email}` },
-    { icon: Phone, label: "Phone", value: site.phone, href: telHref(site.phone) },
+    { label: site.fullName, value: copy.contact.credentialLine, href: null },
+    { label: "Serving Areas", value: copy.hero.servingLine, href: null },
+    { label: "Email", value: site.email, href: `mailto:${site.email}` },
+    { label: "Phone", value: site.phone, href: telHref(site.phone) },
   ];
   return (
-    <section id="contact" className={`${section} bg-(--t2-cream)`}>
-      <div className={`${container} grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14`}>
-        <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:items-start">
-          <div className="relative mx-auto w-44 sm:mx-0 sm:w-48 lg:w-52">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border-[6px] border-(--t2-mint) bg-(--t2-mint) shadow-[0_20px_45px_-20px_rgba(0,0,0,0.35)]">
-              <Image
-                unoptimized
-                fill
-                src={site.photoUrl}
-                alt={`${site.fullName}, tax preparer`}
-                className="object-cover object-top"
-                sizes="13rem"
-              />
-            </div>
+    <section id="contact" className={`scroll-mt-20 ${CONTACT_BG}`}>
+      <div className={`${container} grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr] lg:gap-[3.5%] lg:py-20`}>
+        <div className="mx-auto w-full max-w-60 sm:mx-0">
+          <div className="relative aspect-square border-[5px] border-(--t2-mint) bg-(--t2-mint)">
+            <Image unoptimized fill src={site.photoUrl} alt="Tax Preparer Portrait" className="object-cover object-top" sizes="15rem" />
           </div>
-          <ul className="space-y-5">
-            {rows.map(({ icon: Icon, label, value, href }) => (
-              <li key={label} className="flex items-start gap-4">
-                <span className="grid size-11 shrink-0 place-items-center rounded-tl-[1.1rem] rounded-br-[1.1rem] rounded-tr-md rounded-bl-md bg-(--t2-navy) text-(--t2-tan)">
-                  <Icon className="size-5" aria-hidden />
-                </span>
-                <div className="min-w-0">
-                  <h3 className={`${display} text-[1.45rem] leading-none font-black text-(--t2-navy)`}>{label}</h3>
-                  {href ? (
-                    <a href={href} className="mt-1 block font-medium break-words text-slate-600 transition hover:text-(--t2-navy)">
-                      {value}
-                    </a>
-                  ) : (
-                    <p className="mt-1 font-medium break-words text-slate-600">{value}</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
-        <div className="min-w-0 rounded-[2rem] bg-white p-6 shadow-[0_30px_70px_-35px_rgba(40,52,68,0.6)] ring-1 ring-(--t2-navy)/5 sm:p-9">
-          {copy.contact.heading && (
-            <h2 className={`${display} mb-6 text-5xl leading-none font-black text-(--t2-navy)`}>{copy.contact.heading}</h2>
-          )}
+        <ul className="space-y-7">
+          {rows.map(({ label, value, href }) => (
+            <li key={label}>
+              <h4 className={`${display} text-[1.35rem] leading-tight font-black text-(--t2-navy)`}>{label}</h4>
+              {href ? (
+                <a href={href} className="mt-2 block break-words text-[#666] transition hover:text-(--t2-navy)">
+                  {value}
+                </a>
+              ) : (
+                <p className="mt-2 text-[#666]">{value}</p>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1">
           <ContactForm slug={site.slug} styles={FORM_STYLE} />
         </div>
       </div>
+
+      <footer className={`${openSans} border-t border-black/5 py-8 text-center text-[0.95rem] leading-[1.7] font-normal text-[#666]`}>
+        <p className={`${container} max-w-4xl`}>
+          {linkBrand(copy.footer.text)}{" "}
+          {copy.footer.links.map((l, i) => (
+            <span key={l.url}>
+              {i > 0 && " "}
+              <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-[#2ea3f2] hover:underline">
+                {l.label}
+              </a>
+            </span>
+          ))}
+        </p>
+      </footer>
     </section>
   );
 }

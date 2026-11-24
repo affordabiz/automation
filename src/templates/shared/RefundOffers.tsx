@@ -51,7 +51,18 @@ function CyclePercentIcon() {
 const ICONS = [HandPercentIcon, CyclePercentIcon];
 
 /** The crimson two-offer panel from the Refund Advantage artwork. */
-export function RefundOffers({ cards, className = "" }: { cards: readonly { title: string; detail: string }[]; className?: string }) {
+export function RefundOffers({
+  cards,
+  className = "",
+  compact = false,
+}: {
+  cards: readonly { title: string; detail: string }[];
+  className?: string;
+  /** Smaller type for narrow columns. */
+  compact?: boolean;
+}) {
+  const title = compact ? "mt-4 text-base sm:text-lg" : "mt-6 text-xl sm:text-2xl";
+  const detail = compact ? "mt-2 text-xs sm:text-[0.8rem]" : "mt-3 text-base sm:text-lg";
   return (
     <div className={`rounded-[2rem] bg-[#C0294F] px-6 py-10 text-white shadow-xl sm:px-10 ${className}`}>
       <div className="grid h-full gap-10 sm:grid-cols-2 sm:gap-0 sm:divide-x sm:divide-white/40">
@@ -62,11 +73,11 @@ export function RefundOffers({ cards, className = "" }: { cards: readonly { titl
               key={c.title}
               className="flex flex-col items-center text-center sm:px-6 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-white/30 [&:not(:first-child)]:pt-10 sm:[&:not(:first-child)]:border-t-0 sm:[&:not(:first-child)]:pt-0"
             >
-              <span className="text-[#F6CE2A]">
+              <span className={`text-[#F6CE2A] ${compact ? "[&_svg]:size-14" : ""}`}>
                 <Icon />
               </span>
-              <h3 className="mt-6 text-xl leading-snug font-normal uppercase sm:text-2xl">{emphasize(c.title)}</h3>
-              <p className="mt-3 text-base leading-snug uppercase text-white/95 sm:text-lg">{emphasize(c.detail)}</p>
+              <h3 className={`${title} leading-snug font-normal uppercase`}>{emphasize(c.title)}</h3>
+              <p className={`${detail} leading-snug uppercase text-white/95`}>{emphasize(c.detail)}</p>
             </article>
           );
         })}

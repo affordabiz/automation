@@ -3,26 +3,28 @@ import type { CSSProperties } from "react";
 /** Palette taken from the Template 2 reference page. */
 export const T2_THEME = {
   "--t2-navy": "#283444",
-  "--t2-navy-deep": "#1C2532",
+  "--t2-navy-deep": "#263142",
   "--t2-sage": "#9FA8A3",
   "--t2-mint": "#C5D5CB",
   "--t2-tan": "#DDCCB8",
   "--t2-sand": "#E3E0CF",
   "--t2-cream": "#F9F3E8",
+  "--t2-grey": "#777777",
 } as CSSProperties;
 
-export const display = "font-(family-name:--t2-font-display) tracking-tight";
-export const container = "mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10";
-export const section = "scroll-mt-20 py-20 sm:py-24 lg:py-28";
-export const h2 = `${display} text-[2.6rem] leading-[0.95] font-black sm:text-6xl lg:text-7xl`;
+/** Darker Grotesque: headings and body copy, as on the reference. */
+export const display = "font-(family-name:--t2-font-display)";
+/** Roboto Slab: hero title and subtitle button. */
+export const slab = "font-(family-name:--t2-font-slab)";
+/** Source Sans: navigation. */
+export const navFont = "font-(family-name:--t2-font-nav)";
+/** Open Sans: cash advance subheading and footer. */
+export const openSans = "font-(family-name:--t2-font-open)";
 
-const btn =
-  "group inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-7 py-3 text-center text-[0.95rem] font-semibold tracking-wide transition duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px";
-/** Navy button for light backgrounds. */
-export const btnNavy = `${btn} bg-(--t2-navy) text-white shadow-[0_12px_26px_-14px_rgba(40,52,68,0.9)] hover:-translate-y-0.5 hover:bg-(--t2-navy-deep) focus-visible:outline-(--t2-navy)`;
-/** Tan button for dark backgrounds. */
-export const btnTan = `${btn} bg-(--t2-tan) text-(--t2-navy) shadow-[0_12px_26px_-14px_rgba(0,0,0,0.6)] hover:-translate-y-0.5 hover:bg-white focus-visible:outline-(--t2-tan)`;
-export const btnOutlineNavy = `${btn} text-(--t2-navy) ring-2 ring-inset ring-(--t2-navy) hover:-translate-y-0.5 hover:bg-(--t2-navy) hover:text-white focus-visible:outline-(--t2-navy)`;
-export const btnArrow = "size-4 transition-transform duration-200 group-hover:translate-x-0.5";
+export const container = "mx-auto w-full max-w-[1120px] px-5 sm:px-8 xl:px-5";
+export const h2 = `${display} text-[2.4rem] leading-[1.05] font-black text-(--t2-navy) sm:text-5xl lg:text-[3.55rem]`;
+
+/** Square navy button with wide letter-spacing, as on the reference. */
+export const btnNavy = `${display} inline-flex min-h-12 items-center justify-center bg-(--t2-navy) px-8 py-3.5 text-center text-[1.05rem] leading-tight font-black tracking-[2px] text-white uppercase transition duration-200 hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--t2-navy) sm:px-10`;
 
 export { externalProps, isExternal, telHref } from "../t1/theme";

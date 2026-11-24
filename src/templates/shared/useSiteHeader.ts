@@ -9,11 +9,11 @@ export const isHash = (url: string) => url.startsWith("#") && url.length > 1;
 /** Below this width the slide-in menu is used instead of the inline nav. */
 const DESKTOP_MIN = 1280;
 
-/** Removed from every template on request; older CMS copy may still list it. */
-const HIDDEN_BUTTON = /hiree\s*sign\s*-?\s*up/i;
+/** Removed from Template 1 on request; its older CMS copy still lists it. */
+const SIGNUP_BUTTON = /hiree\s*sign\s*-?\s*up/i;
 
-export function visibleButtons(buttons: readonly LinkItem[]): LinkItem[] {
-  return buttons.filter((b) => b.label.trim() && b.url.trim() && !HIDDEN_BUTTON.test(b.label));
+export function visibleButtons(buttons: readonly LinkItem[], { hideSignup = false } = {}): LinkItem[] {
+  return buttons.filter((b) => b.label.trim() && b.url.trim() && !(hideSignup && SIGNUP_BUTTON.test(b.label)));
 }
 
 /** Shared header behaviour: scroll shadow, active section, and an accessible mobile menu. */

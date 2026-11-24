@@ -1,31 +1,64 @@
-import { CircleDollarSign, Target, Zap } from "lucide-react";
+import Image from "next/image";
+import { Check } from "lucide-react";
 import type { TemplateProps } from "../types";
 import { container, display } from "./theme";
 
-/** Three statement tiles: navy, tan and light, as on the reference. */
 const TILES = [
-  { icon: CircleDollarSign, tile: "bg-(--t2-navy) text-(--t2-tan)", badge: "bg-(--t2-tan) text-(--t2-navy)" },
-  { icon: Target, tile: "bg-(--t2-tan) text-(--t2-navy)", badge: "bg-(--t2-navy) text-(--t2-tan)" },
-  { icon: Zap, tile: "bg-white text-(--t2-navy) ring-1 ring-inset ring-(--t2-navy)/10", badge: "bg-(--t2-navy) text-white" },
+  { tile: "bg-(--t2-navy) text-(--t2-tan) leading-[1.8]", icon: "/templates/t2/icon-refund.png" },
+  { tile: "bg-(--t2-tan) text-(--t2-navy) leading-[1.8]", icon: "/templates/t2/icon-target.png" },
+  { tile: "bg-[#fafafa] text-(--t2-navy) leading-[1.55] pt-16! lg:pt-[4.75rem]! lg:pb-[3.1rem]!", icon: null },
 ];
+
+/** Line shapes behind the tiles and "Why Us?", drawn from the reference background art. */
+function Shapes() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 hidden overflow-hidden lg:block">
+      <div className="absolute top-[18rem] -left-24 h-52 w-[12.5rem] rounded-r-full border-2 border-(--t2-tan)" />
+      <svg className="absolute bottom-0 left-0 h-[22rem] w-36 text-(--t2-navy)" viewBox="0 0 144 352" preserveAspectRatio="none">
+        <path d="M0 84 L144 0 V262 L0 352 Z" fill="currentColor" />
+      </svg>
+      <svg className="absolute right-0 bottom-0 h-20 w-32 text-(--t2-tan)" viewBox="0 0 128 80" preserveAspectRatio="none">
+        <path d="M128 0 V80 H0 Z" fill="currentColor" />
+      </svg>
+    </div>
+  );
+}
 
 export function Features({ copy }: TemplateProps) {
   return (
-    <section className="relative bg-(--t2-cream) pb-20 sm:pb-24 lg:pb-28">
-      <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-(--t2-sand)/60" />
+    <section className="relative bg-white pt-10 pb-16 lg:pb-20">
+      <Shapes />
       <div className={`${container} relative`}>
-        <div className="grid overflow-hidden rounded-[2rem] shadow-[0_30px_70px_-35px_rgba(40,52,68,0.6)] md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           {copy.intro.cards.map((card, i) => {
-            const { icon: Icon, tile, badge } = TILES[i % TILES.length];
+            const { tile, icon } = TILES[i % TILES.length];
             return (
-              <article key={i} className={`flex flex-col gap-6 p-8 sm:p-10 ${tile}`}>
-                <span className={`grid size-16 place-items-center rounded-tl-[1.75rem] rounded-br-[1.75rem] rounded-tr-md rounded-bl-md ${badge}`}>
-                  <Icon className="size-8" strokeWidth={1.6} aria-hidden />
-                </span>
-                <h3 className={`${display} text-[1.85rem] leading-[1.05] font-black sm:text-[2.1rem]`}>{card.body}</h3>
+              <article key={i} className={`relative px-8 py-8 sm:px-8 lg:pt-8 lg:pb-12 ${tile}`}>
+                {icon ? (
+                  <span className="mb-6 inline-block border-[5px] border-[#333]/80 p-0.5">
+                    <Image unoptimized src={icon} alt="" width={64} height={64} className="size-16" />
+                  </span>
+                ) : (
+                  <span className="absolute -top-7 right-6 border-[5px] border-[#333]/80 bg-white p-0.5 lg:-top-10">
+                    <Image unoptimized src="/templates/t2/leaf.png" alt="" width={82} height={82} className="size-[4.5rem] lg:size-[5.1rem]" />
+                  </span>
+                )}
+                <h3 className={`${display} text-[1.6rem] font-black sm:text-[1.85rem]`}>{card.body}</h3>
               </article>
             );
           })}
+        </div>
+
+        <div id="why-us" className="scroll-mt-24 pt-14 lg:px-[10%] lg:pt-10">
+          <h2 className={`${display} text-[2.6rem] leading-tight font-black text-(--t2-navy) lg:text-5xl`}>{copy.highlightsHeading}</h2>
+          <ul className="mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-y-6">
+            {copy.highlights.map((h) => (
+              <li key={h} className="flex gap-4">
+                <Check className="mt-0.5 size-7 shrink-0 text-(--t2-mint)" strokeWidth={2} aria-hidden />
+                <span className={`${display} text-[1.1rem] leading-[1.9] font-extrabold text-(--t2-navy)`}>{h}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

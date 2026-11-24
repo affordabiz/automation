@@ -1,7 +1,8 @@
 import type { SiteData } from "./types";
 
+/** Sample details shown on each template's preview, matching that template's reference page. */
 export function sampleSite(templateNumber: number): SiteData {
-  return {
+  const base: SiteData = {
     id: null,
     slug: null,
     templateNumber,
@@ -14,4 +15,16 @@ export function sampleSite(templateNumber: number): SiteData {
     logoUrl: "/samples/logo-icon.svg",
     photoUrl: "/templates/t1/professional.jpg",
   };
+  if (templateNumber === 2) {
+    return {
+      ...base,
+      fullName: "First & Last Name",
+      email: "durenstaxsvc@gmail.com",
+      phone: "(979) 436-1051",
+      servingArea: "Atlanta, GA",
+      logoUrl: "/templates/t2/logo-placeholder.png",
+      photoUrl: "/templates/t2/jane-doe.webp",
+    };
+  }
+  return base;
 }
