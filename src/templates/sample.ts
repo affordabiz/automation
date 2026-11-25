@@ -26,6 +26,13 @@ export function sampleSite(templateNumber: number): SiteData {
       photoUrl: "/templates/t2/jane-doe.webp",
     };
   }
+  if (templateNumber === 6 || templateNumber === 7) {
+    return {
+      ...base,
+      logoUrl: "/templates/t6/your-logo-here-placeholder.webp",
+      photoUrl: "/templates/t6/Graphics-07.webp",
+    };
+  }
   if (templateNumber === 4) {
     return {
       ...base,
@@ -35,14 +42,15 @@ export function sampleSite(templateNumber: number): SiteData {
       photoUrl: "/templates/t4/jane-doe.webp",
     };
   }
-  if (templateNumber === 3) {
+  if (templateNumber === 3 || templateNumber === 5) {
+    const dir = templateNumber === 5 ? "t5" : "t3";
     return {
       ...base,
       fullName: "First & Last Name",
       phone: "(123) 456-7890",
       servingArea: "Atlanta, GA",
-      logoUrl: "/templates/t3/logo-placeholder.png",
-      photoUrl: "/templates/t3/portrait.png",
+      logoUrl: `/templates/${dir}/logo-placeholder.png`,
+      photoUrl: `/templates/${dir}/portrait.png`,
     };
   }
   return base;

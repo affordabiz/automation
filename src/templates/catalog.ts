@@ -12,9 +12,9 @@ export const TEMPLATE_CATALOG: readonly TemplateMeta[] = [
   { number: 2, name: "Template 2", status: "live", swatch: ["#283444", "#DDCCB8"] },
   { number: 3, name: "Template 3", status: "live", swatch: ["#678297", "#D20804"] },
   { number: 4, name: "Template 4", status: "live", swatch: ["#C02D51", "#06BCC0"] },
-  { number: 5, name: "Template 5", status: "coming-soon", swatch: ["#1E293B", "#64748B"] },
-  { number: 6, name: "Template 6", status: "coming-soon", swatch: ["#1E293B", "#64748B"] },
-  { number: 7, name: "Template 7", status: "coming-soon", swatch: ["#1E293B", "#64748B"] },
+  { number: 5, name: "Template 5", status: "live", swatch: ["#3A506B", "#FFD60A"] },
+  { number: 6, name: "Template 6", status: "live", swatch: ["#0B0B0B", "#FFC107"] },
+  { number: 7, name: "Template 7", status: "live", swatch: ["#2C366A", "#3A76B4"] },
 ];
 
 export function getTemplateMeta(n: number): TemplateMeta | undefined {

@@ -69,6 +69,8 @@ export interface TemplateCopy {
     credentialLine: string;
     /** Template 3 info headings: specialty, about, phone/email, service area. */
     infoHeadings?: string[];
+    /** Templates 6–7 area line in the contact block, e.g. "Serving {{servingArea}}". */
+    servingLine?: string;
   };
   footer: { text: string; links: LinkItem[] };
 }

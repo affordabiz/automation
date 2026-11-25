@@ -135,7 +135,13 @@ export const template = defineType({
         defineField({
           name: "contact",
           type: "object",
-          fields: [str("heading"), str("intro"), str("credentialLine"), strings("infoHeadings", "Info headings")],
+          fields: [
+            str("heading"),
+            str("intro"),
+            str("credentialLine"),
+            str("servingLine", "Serving line"),
+            strings("infoHeadings", "Info headings"),
+          ],
         }),
         defineField({ name: "footer", type: "object", fields: [txt("text"), links("links")] }),
       ],
