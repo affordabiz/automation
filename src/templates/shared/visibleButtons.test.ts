@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { T1_DEFAULT_COPY } from "../t1/defaultCopy";
 import { T2_DEFAULT_COPY } from "../t2/defaultCopy";
 import { T3_DEFAULT_COPY } from "../t3/defaultCopy";
+import { T4_DEFAULT_COPY } from "../t4/defaultCopy";
 import { visibleButtons } from "./buttons";
 
 const url = "https://example.com";
@@ -23,7 +24,7 @@ describe("visibleButtons", () => {
   });
 
   it("no template ships a Hiree Signup button", () => {
-    for (const copy of [T1_DEFAULT_COPY, T2_DEFAULT_COPY, T3_DEFAULT_COPY]) {
+    for (const copy of [T1_DEFAULT_COPY, T2_DEFAULT_COPY, T3_DEFAULT_COPY, T4_DEFAULT_COPY]) {
       expect(copy.headerButtons.some((b) => /sign\s*-?\s*up/i.test(b.label))).toBe(false);
     }
   });

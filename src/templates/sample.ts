@@ -26,6 +26,15 @@ export function sampleSite(templateNumber: number): SiteData {
       photoUrl: "/templates/t2/jane-doe.webp",
     };
   }
+  if (templateNumber === 4) {
+    return {
+      ...base,
+      fullName: "First & Last Name",
+      servingArea: "Atlanta, GA",
+      logoUrl: "/templates/t4/logo-placeholder.png",
+      photoUrl: "/templates/t4/jane-doe.webp",
+    };
+  }
   if (templateNumber === 3) {
     return {
       ...base,

@@ -3,8 +3,9 @@ import type { TemplateProps } from "./types";
 import TemplateOne from "./t1";
 import TemplateTwo from "./t2";
 import TemplateThree from "./t3";
+import TemplateFour from "./t4";
 
-const IMPLEMENTED = new Set([1, 2, 3]);
+const IMPLEMENTED = new Set([1, 2, 3, 4]);
 
 export function hasTemplateComponent(n: number): boolean {
   return IMPLEMENTED.has(n);
@@ -21,6 +22,8 @@ export function TemplateView({ templateNumber, site, copy }: TemplateProps & { t
       return <TemplateTwo {...props} />;
     case 3:
       return <TemplateThree {...props} />;
+    case 4:
+      return <TemplateFour {...props} />;
     default:
       return null;
   }
