@@ -26,14 +26,14 @@ function Shapes() {
 
 export function Features({ copy }: TemplateProps) {
   return (
-    <section className="relative bg-white pt-10 pb-16 lg:pb-20">
+    <section className="relative bg-white pt-12 lg:pt-14">
       <Shapes />
       <div className={`${container} relative`}>
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           {copy.intro.cards.map((card, i) => {
             const { tile, icon } = TILES[i % TILES.length];
             return (
-              <article key={i} className={`relative px-8 py-8 sm:px-8 lg:pt-8 lg:pb-12 ${tile}`}>
+              <article key={i} className={`relative rounded-2xl px-6 py-8 sm:px-8 lg:pt-8 lg:pb-12 ${tile}`}>
                 {icon ? (
                   <span className="mb-6 inline-block border-[5px] border-[#333]/80 p-0.5">
                     <Image unoptimized src={icon} alt="" width={64} height={64} className="size-16" />
@@ -49,13 +49,15 @@ export function Features({ copy }: TemplateProps) {
           })}
         </div>
 
-        <div id="why-us" className="scroll-mt-24 pt-14 lg:px-[10%] lg:pt-10">
+        <div id="why-us" className="scroll-mt-24 pt-14 lg:pt-16">
           <h2 className={`${display} text-[2.6rem] leading-tight font-black text-(--t2-navy) lg:text-5xl`}>{copy.highlightsHeading}</h2>
-          <ul className="mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-y-6">
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-x-8 md:gap-y-5">
             {copy.highlights.map((h) => (
-              <li key={h} className="flex gap-4">
-                <Check className="mt-0.5 size-7 shrink-0 text-(--t2-mint)" strokeWidth={2} aria-hidden />
-                <span className={`${display} text-[1.1rem] leading-[1.9] font-extrabold text-(--t2-navy)`}>{h}</span>
+              <li key={h} className="flex items-center gap-4 rounded-xl bg-[#fafafa] px-4 py-4 ring-1 ring-inset ring-(--t2-navy)/5">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-(--t2-mint) text-(--t2-navy)">
+                  <Check className="size-5" strokeWidth={3} aria-hidden />
+                </span>
+                <span className={`${display} text-[1.15rem] leading-snug font-extrabold text-(--t2-navy)`}>{h}</span>
               </li>
             ))}
           </ul>

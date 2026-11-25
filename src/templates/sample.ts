@@ -26,5 +26,15 @@ export function sampleSite(templateNumber: number): SiteData {
       photoUrl: "/templates/t2/jane-doe.webp",
     };
   }
+  if (templateNumber === 3) {
+    return {
+      ...base,
+      fullName: "First & Last Name",
+      phone: "(123) 456-7890",
+      servingArea: "Atlanta, GA",
+      logoUrl: "/templates/t3/logo-placeholder.png",
+      photoUrl: "/templates/t3/portrait.png",
+    };
+  }
   return base;
 }

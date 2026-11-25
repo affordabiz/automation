@@ -36,9 +36,17 @@ export interface TemplateCopy {
   highlights: string[];
   /** Heading above the highlights list (Template 2 "Why Us?"). */
   highlightsHeading: string;
-  intro: { heading: string; cards: { body: string }[] };
+  intro: {
+    heading: string;
+    /** Line under the heading (Template 3 "Contact Our Tax Professionals Today!"). */
+    subheading?: string;
+    ctaLabel?: string;
+    cards: { title?: string; body: string }[];
+  };
   services: { heading: string; ctaLabel: string; items: { title: string; body: string }[] };
-  faq: { heading: string; items: { question: string; answer: string }[] };
+  faq: { heading: string; ctaLabel?: string; items: { question: string; answer: string }[] };
+  /** Template 3 hero booking form. */
+  booking?: { heading: string };
   forms: {
     heading: string;
     groups: { heading: string; links: LinkItem[] }[];
@@ -55,7 +63,13 @@ export interface TemplateCopy {
     disclaimers: string[];
   };
   cta: { heading: string; buttonLabel: string };
-  contact: { heading: string; intro: string; credentialLine: string };
+  contact: {
+    heading: string;
+    intro: string;
+    credentialLine: string;
+    /** Template 3 info headings: specialty, about, phone/email, service area. */
+    infoHeadings?: string[];
+  };
   footer: { text: string; links: LinkItem[] };
 }
 

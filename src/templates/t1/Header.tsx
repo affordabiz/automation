@@ -8,7 +8,7 @@ import { btnPrimary, container, display, externalProps, isExternal, telHref } fr
 
 export function Header({ site, copy }: TemplateProps) {
   const { open, setOpen, scrolled, active, go, panelRef, toggleRef } = useSiteHeader(copy.nav);
-  const buttons = visibleButtons(copy.headerButtons, { hideSignup: true });
+  const buttons = visibleButtons(copy.headerButtons);
 
   return (
     <>

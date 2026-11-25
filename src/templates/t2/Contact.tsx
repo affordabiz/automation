@@ -10,9 +10,9 @@ const CONTACT_BG =
 
 const FORM_STYLE: ContactFormStyle = {
   field:
-    "w-full border-0 bg-white px-4 py-4 text-sm font-medium text-slate-800 placeholder:text-[#999] focus:outline-2 focus:outline-(--t2-navy) font-(family-name:--t2-font-display)",
-  button: `${btnNavy} min-w-32`,
-  success: "flex flex-col items-center gap-3 bg-white p-8 text-center text-lg font-bold text-(--t2-navy)",
+    "w-full rounded-lg border-0 bg-white px-4 py-4 text-base font-medium text-slate-800 ring-1 ring-inset ring-(--t2-navy)/10 placeholder:text-[#999] focus:outline-2 focus:outline-(--t2-navy) font-(family-name:--t2-font-display)",
+  button: `${btnNavy} min-w-36`,
+  success: "flex flex-col items-center gap-3 rounded-xl bg-white p-8 text-center text-lg font-bold text-(--t2-navy)",
   successIcon: "size-10 text-(--t2-navy)",
   labels: { name: "Name", email: "Email Address", message: "Message", submit: "Submit" },
 };
@@ -45,7 +45,7 @@ export function Contact({ site, copy }: TemplateProps) {
     <section id="contact" className={`scroll-mt-20 ${CONTACT_BG}`}>
       <div className={`${container} grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr] lg:gap-[3.5%] lg:py-20`}>
         <div className="mx-auto w-full max-w-60 sm:mx-0">
-          <div className="relative aspect-square border-[5px] border-(--t2-mint) bg-(--t2-mint)">
+          <div className="relative aspect-square overflow-hidden rounded-xl border-[5px] border-(--t2-mint) bg-(--t2-mint)">
             <Image unoptimized fill src={site.photoUrl} alt="Tax Preparer Portrait" className="object-cover object-top" sizes="15rem" />
           </div>
         </div>

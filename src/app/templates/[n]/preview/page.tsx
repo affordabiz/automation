@@ -26,12 +26,5 @@ export default async function PreviewPage({ params }: Props) {
   const copy = await getTemplateCopy(n);
   if (!copy) notFound();
   const site = sampleSite(n);
-  return (
-    <>
-      <div className="bg-slate-900 py-2 text-center text-xs font-medium text-white">
-        Template preview with sample details — your own information replaces it.
-      </div>
-      <TemplateView templateNumber={n} site={site} copy={resolveTokens(copy, siteTokenValues(site))} />
-    </>
-  );
+  return <TemplateView templateNumber={n} site={site} copy={resolveTokens(copy, siteTokenValues(site))} />;
 }

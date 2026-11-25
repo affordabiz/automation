@@ -42,10 +42,12 @@ export const template = defineType({
           type: "object",
           fields: [
             str("heading"),
+            str("subheading"),
+            str("ctaLabel", "Button label"),
             defineField({
               name: "cards",
               type: "array",
-              of: [{ type: "object", name: "introCard", fields: [txt("body")] }],
+              of: [{ type: "object", name: "introCard", fields: [str("title"), txt("body")] }],
             }),
           ],
         }),
@@ -68,6 +70,7 @@ export const template = defineType({
           type: "object",
           fields: [
             str("heading"),
+            str("ctaLabel", "Button label"),
             defineField({
               name: "items",
               type: "array",
@@ -128,7 +131,12 @@ export const template = defineType({
           ],
         }),
         defineField({ name: "cta", title: "Call to action", type: "object", fields: [str("heading"), str("buttonLabel")] }),
-        defineField({ name: "contact", type: "object", fields: [str("heading"), str("intro"), str("credentialLine")] }),
+        defineField({ name: "booking", title: "Booking form", type: "object", fields: [str("heading")] }),
+        defineField({
+          name: "contact",
+          type: "object",
+          fields: [str("heading"), str("intro"), str("credentialLine"), strings("infoHeadings", "Info headings")],
+        }),
         defineField({ name: "footer", type: "object", fields: [txt("text"), links("links")] }),
       ],
     }),

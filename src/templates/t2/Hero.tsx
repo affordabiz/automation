@@ -17,7 +17,7 @@ export function Hero({ copy }: TemplateProps) {
         </h1>
         <a
           href="#contact"
-          className={`${slab} mt-8 inline-block max-w-full bg-(--t2-grey) px-6 py-4 text-base text-white transition hover:bg-[#5f5f5f] sm:px-12 sm:text-xl lg:mt-10`}
+          className={`${slab} mt-8 inline-block max-w-full rounded-lg bg-(--t2-grey) px-6 py-4 text-base text-white shadow-[0_12px_28px_-14px_rgba(0,0,0,0.6)] transition hover:bg-[#5f5f5f] sm:px-12 sm:text-xl lg:mt-10`}
         >
           {hero.subtitle}
         </a>

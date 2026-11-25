@@ -33,13 +33,8 @@ export const T2_DEFAULT_COPY: TemplateCopy = {
     { label: "Cash Advance", url: "#cash-advance" },
     { label: "Contact", url: "#contact" },
   ],
-  headerButtons: [
-    { label: "HIREE VIDEO", url: "https://www.taxbizinbox.com/video/" },
-    {
-      label: "HIREE SIGNUP",
-      url: "https://trainings.affordataxbizbox.com/bundles/2026-new-ptin-partners-ahs-hirees?th__ug=f93fa8ea",
-    },
-  ],
+  // "Hiree Signup" from the reference is intentionally left out on every template.
+  headerButtons: [{ label: "HIREE VIDEO", url: "https://www.taxbizinbox.com/video/" }],
   hero: {
     eyebrow: "$250-$7,500 Cash Advance",
     title: "{{businessName}}",

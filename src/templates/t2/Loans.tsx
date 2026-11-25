@@ -24,7 +24,7 @@ export function Loans({ copy }: TemplateProps) {
             )}
           </div>
           <div className="lg:-mt-3">
-            <div className="border-[5px] border-[#333] bg-white shadow-[0_25px_85px_-15px_rgba(0,0,0,0.3)]">
+            <div className="overflow-hidden rounded-xl border-[5px] border-[#333] bg-white shadow-[0_25px_85px_-15px_rgba(0,0,0,0.3)]">
               {loans.partnerLogoUrl ? (
                 <Image
                   unoptimized
@@ -38,13 +38,13 @@ export function Loans({ copy }: TemplateProps) {
                 <p className={`${display} p-6 text-center text-4xl font-black text-[#C0294F]`}>{loans.partnerName}</p>
               )}
             </div>
-            <RefundOffers compact cards={loans.cards} className="mt-2 rounded-none! border-b-[5px] border-white px-4! py-8! shadow-none! sm:px-6!" />
+            <RefundOffers compact cards={loans.cards} className="mt-3 rounded-xl! px-4! py-8! shadow-none! sm:px-6!" />
           </div>
         </div>
 
         <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:gap-14">
           <div className="relative self-start">
-            <div className="relative aspect-[502/320] border-[5px] border-[#333]">
+            <div className="relative aspect-[502/320] overflow-hidden rounded-xl border-[5px] border-[#333]">
               <Image
                 unoptimized
                 fill

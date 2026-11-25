@@ -31,7 +31,7 @@ describe("parseOnboarding", () => {
   });
 
   it("reports per-field errors", () => {
-    const r = parseOnboarding(form({ fullName: "", email: "nope", phone: "abc", slug: "a--b", templateNumber: "3" }));
+    const r = parseOnboarding(form({ fullName: "", email: "nope", phone: "abc", slug: "a--b", templateNumber: "4" }));
     expect(r.success).toBe(false);
     if (r.success) return;
     expect(r.errors.fullName?.[0]).toMatch(/required/i);

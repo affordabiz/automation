@@ -24,7 +24,13 @@ export const openSans = "font-(family-name:--t2-font-open)";
 export const container = "mx-auto w-full max-w-[1120px] px-5 sm:px-8 xl:px-5";
 export const h2 = `${display} text-[2.4rem] leading-[1.05] font-black text-(--t2-navy) sm:text-5xl lg:text-[3.55rem]`;
 
-/** Square navy button with wide letter-spacing, as on the reference. */
-export const btnNavy = `${display} inline-flex min-h-12 items-center justify-center bg-(--t2-navy) px-8 py-3.5 text-center text-[1.05rem] leading-tight font-black tracking-[2px] text-white uppercase transition duration-200 hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--t2-navy) sm:px-10`;
+const btn = `${display} group inline-flex min-h-[3.25rem] items-center justify-center gap-3 rounded-lg px-7 py-3 text-center text-[1.05rem] leading-tight font-black tracking-[1.5px] uppercase shadow-[0_10px_24px_-14px_rgba(40,52,68,0.9)] transition duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-0 sm:px-9`;
+/** Main button: navy, turning tan on hover. */
+export const btnNavy = `${btn} bg-(--t2-navy) text-white hover:bg-(--t2-tan) hover:text-(--t2-navy) focus-visible:outline-(--t2-navy)`;
+/** Highlight button: tan, turning navy on hover. */
+export const btnTan = `${btn} bg-(--t2-tan) text-(--t2-navy) hover:bg-(--t2-navy) hover:text-white focus-visible:outline-(--t2-navy)`;
+/** Small arrow chip that sits at the end of a button. */
+export const btnChip =
+  "grid size-7 shrink-0 place-items-center rounded-md bg-white/15 text-(--t2-tan) transition group-hover:translate-x-0.5 group-hover:bg-(--t2-navy) group-hover:text-white";
 
 export { externalProps, isExternal, telHref } from "../t1/theme";
