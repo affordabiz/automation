@@ -1,7 +1,7 @@
 import type { TemplateCopy } from "../types";
 
 const CHECKLIST_URL =
-  "https://www.taxprep.me/wp-content/uploads/2025/12/Tax-Preparation-Client-Checklist.pdf";
+  "/files/Tax-Preparation-Client-Checklist.pdf";
 
 /** Verbatim copy from the Template 1 reference page. Do not reword. */
 export const T1_DEFAULT_COPY: TemplateCopy = {

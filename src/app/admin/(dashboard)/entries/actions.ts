@@ -152,7 +152,9 @@ export async function deleteEntriesAction(ids: string[]): Promise<ActionState> {
     done++;
   }
   refresh();
-  return summary("deleted", done, failed);
+  const result = summary("deleted", done, failed);
+  if (result.message) result.message += done === 1 ? " Its web address is free to use again." : " Their web addresses are free to use again.";
+  return result;
 }
 
 const editSchema = z.object({

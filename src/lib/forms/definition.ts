@@ -79,6 +79,7 @@ const settingsSchema = z.object({
     }, "The redirect URL must start with https://.")
     .optional(),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Choose a valid color.").optional(),
+  hideLabels: z.boolean().optional(),
   webpage: z
     .object({
       templateNumber: z.number().int(),

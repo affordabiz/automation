@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { requirePermission } from "@/lib/admin/auth";
+import { siteBase } from "@/lib/siteUrl";
 import { loadForm } from "../data";
 import { ShareLinks } from "./ShareLinks";
 
@@ -12,7 +13,7 @@ export default async function ShareFormPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   await requirePermission("forms.view");
   const form = await loadForm(id);
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/+$/, "");
+  const base = siteBase();
   const origin = new URL(base).origin;
   const frameId = `affordabiz-form-${form.slug}`;
   const embed = `<iframe id="${frameId}" src="${base}/embed/${form.slug}" title="${escapeAttribute(form.name)}" loading="lazy" style="width:100%;min-height:640px;border:0;"></iframe>

@@ -1,7 +1,7 @@
 import type { TemplateCopy } from "../types";
 
 const CHECKLIST_URL =
-  "https://www.taxprep.me/wp-content/uploads/2025/12/Tax-Preparation-Client-Checklist.pdf";
+  "/files/Tax-Preparation-Client-Checklist.pdf";
 export const CHECKLIST = `[Client Document Checklist](${CHECKLIST_URL})`;
 
 export const DEDUCTIONS = [

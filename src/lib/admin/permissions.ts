@@ -24,6 +24,10 @@ export const PERMISSION_GROUPS = [
     ],
   },
   {
+    feature: "Payments",
+    permissions: [{ key: "payments.view", label: "View payments" }],
+  },
+  {
     feature: "Automations",
     permissions: [
       { key: "automations.view", label: "View automations" },

@@ -17,7 +17,7 @@ export interface OnboardingData {
 export type FieldErrors = Partial<Record<string, string[]>>;
 
 export type OnboardingParseResult =
-  | { success: true; data: OnboardingData; logo: File; photo: File }
+  | { success: true; data: OnboardingData; logo: File | null; photo: File | null }
   | { success: false; errors: FieldErrors };
 
 const PHONE = /^[+()\d\s.-]{7,20}$/;
@@ -69,14 +69,19 @@ export function checkImage(def: FieldDef, value: FormDataEntryValue | null): str
   return null;
 }
 
-export function parseOnboarding(form: FormData): OnboardingParseResult {
+/** With `imagesOptional`, a missing logo or photo is allowed (an earlier webpage's image is reused). */
+export function parseOnboarding(form: FormData, options: { imagesOptional?: boolean } = {}): OnboardingParseResult {
   const raw = Object.fromEntries(TEXT_FIELDS.map((f) => [f.name, String(form.get(f.name) ?? "")]));
   const parsed = textSchema.safeParse(raw);
   const errors: FieldErrors = parsed.success ? {} : { ...z.flattenError(parsed.error).fieldErrors };
 
-  const files: Record<string, File> = {};
+  const files: Record<string, File | null> = {};
   for (const def of IMAGE_FIELDS) {
     const value = form.get(def.name);
+    if (options.imagesOptional && !(value instanceof File && value.size > 0)) {
+      files[def.name] = null;
+      continue;
+    }
     const problem = checkImage(def, value);
     if (problem) errors[def.name] = [problem];
     else files[def.name] = value as File;

@@ -139,6 +139,8 @@ export interface FormSettings {
   successMessage?: string;
   redirectUrl?: string;
   accentColor?: string;
+  /** Hide field labels; questions show inside the box as placeholders instead. */
+  hideLabels?: boolean;
   webpage?: WebpageLink | null;
 }
 

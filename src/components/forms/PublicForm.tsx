@@ -5,9 +5,20 @@ import { CircleCheck, ExternalLink, FileUp, LoaderCircle, Star, X } from "lucide
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { allowedExtensions, validateField, validateForm, visibleFieldIds } from "@/lib/forms/engine";
 import { DEFAULT_ACCENT, type FormField, type FormSchema, type FormValue, type FormValues } from "@/lib/forms/types";
+import { useFormView } from "./useFormView";
 
 const controlClass =
   "mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[var(--form-accent)] focus:ring-2 focus:ring-[var(--form-accent)]/20 aria-[invalid=true]:border-red-500";
+
+/** Fields whose question can sit inside the box when labels are hidden. */
+const PLACEHOLDER_TYPES = new Set<FormField["type"]>(["short_text", "long_text", "email", "phone", "url", "number", "dropdown"]);
+
+/** With "Hide labels" on, the label is visually hidden and the question moves into the placeholder. */
+export function labelDisplay(field: FormField, hideLabels: boolean | undefined) {
+  const hidden = Boolean(hideLabels) && PLACEHOLDER_TYPES.has(field.type);
+  const shown = hidden ? { ...field, placeholder: `${field.label}${field.required ? " *" : ""}` } : field;
+  return { hidden, field: shown, labelClass: hidden ? "sr-only" : "block text-sm font-medium text-slate-800" };
+}
 
 function initialValues(fields: readonly FormField[]): FormValues {
   const values: FormValues = {};
@@ -19,7 +30,7 @@ function initialValues(fields: readonly FormField[]): FormValues {
   return values;
 }
 
-function FieldControl({
+export function FieldControl({
   field,
   value,
   files,
@@ -172,6 +183,7 @@ export function PublicForm({
   const turnstile = useRef<TurnstileInstance>(null);
   const visible = useMemo(() => visibleFieldIds(fields, values), [fields, values]);
   const preview = mode === "preview";
+  useFormView(slug, !preview);
 
   useEffect(() => {
     if (mode !== "embed" || !root.current) return;
@@ -307,11 +319,12 @@ export function PublicForm({
             const id = `field-${field.id}`;
             const error = errors[field.id];
             const labelable = !["radio", "checkboxes", "rating", "consent"].includes(field.type);
+            const display = labelDisplay(field, settings.hideLabels);
             return (
               <div key={field.id} className={`min-w-0 ${span}`}>
                 {field.type !== "consent" ? (
                   labelable ? (
-                    <label id={`${id}-label`} htmlFor={id} className="block text-sm font-medium text-slate-800">
+                    <label id={`${id}-label`} htmlFor={id} className={display.labelClass}>
                       {field.label}{field.required ? <span className="text-red-600"> *</span> : null}
                     </label>
                   ) : (
@@ -321,7 +334,7 @@ export function PublicForm({
                   )
                 ) : null}
                 <FieldControl
-                  field={field}
+                  field={display.field}
                   value={values[field.id]}
                   files={files[field.id] ?? []}
                   error={error}
