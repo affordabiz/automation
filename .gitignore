@@ -46,3 +46,6 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+
+# Client data exported from WordPress and admin backups (personal details, never commit)
+/migration/

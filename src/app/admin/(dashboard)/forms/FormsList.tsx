@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, FileText, Inbox, Lock, Plus, Trash2, X } from "lucide-react";
+import { Copy, Eye, FileText, Inbox, Lock, Plus, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 import type { ActionState } from "@/lib/admin/actionState";
@@ -43,7 +43,10 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
-type Row = FormListItem & { updatedLabel: string };
+type Row = FormListItem;
+
+const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
+const plural = (n: number, one: string, many: string) => `${compact.format(n)} ${n === 1 ? one : many}`;
 
 export function FormsList({ forms, canManage }: { forms: Row[]; canManage: boolean }) {
   const [creating, setCreating] = useState(false);
@@ -88,7 +91,7 @@ export function FormsList({ forms, canManage }: { forms: Row[]; canManage: boole
           {forms.map((form) => {
             const status = STATUS[form.status];
             return (
-              <li key={form.id} className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-teal-600/60 hover:shadow-sm">
+              <li key={form.id} className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-teal-600/60 hover:shadow-md focus-within:border-teal-600/60">
                 <div className="flex items-start justify-between gap-2">
                   <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-teal-50 text-teal-700">
                     {form.is_system ? <Lock className="size-5" aria-hidden /> : <FileText className="size-5" aria-hidden />}
@@ -98,12 +101,29 @@ export function FormsList({ forms, canManage }: { forms: Row[]; canManage: boole
                   </span>
                 </div>
                 <h2 className="mt-3 truncate font-semibold text-slate-900">
-                  {form.is_system ? form.name : <Link href={`/admin/forms/${form.id}`} className="hover:underline">{form.name}</Link>}
+                  {/* The link covers the whole card; action buttons sit above it. */}
+                  <Link
+                    href={form.is_system ? "/admin/entries" : `/admin/forms/${form.id}/submissions`}
+                    className="outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] group-hover:text-teal-800 focus-visible:after:ring-2 focus-visible:after:ring-teal-700"
+                  >
+                    {form.name}
+                  </Link>
                 </h2>
-                <p className="mt-0.5 text-xs text-slate-500">
-                  {form.is_system ? "Uses the Entries workflow" : `${form.submissions} ${form.submissions === 1 ? "response" : "responses"} · Updated ${form.updatedLabel}`}
-                </p>
-                <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
+                <dl className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <div className="flex items-center gap-1.5">
+                    <dt className="sr-only">{form.is_system ? "Entries" : "Responses"}</dt>
+                    <Inbox className="size-3.5 text-slate-400" aria-hidden />
+                    <dd className="font-medium text-slate-700">
+                      {form.is_system ? plural(form.submissions, "entry", "entries") : plural(form.submissions, "response", "responses")}
+                    </dd>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <dt className="sr-only">Views</dt>
+                    <Eye className="size-3.5 text-slate-400" aria-hidden />
+                    <dd className="font-medium text-slate-700">{plural(form.views, "view", "views")}</dd>
+                  </div>
+                </dl>
+                <div className="relative z-10 mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
                   {form.is_system ? (
                     <Link href="/admin/entries" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                       <Inbox className="size-4" aria-hidden /> View entries

@@ -1,12 +1,13 @@
 import "server-only";
 import { sendEmail } from "@/lib/brevo";
 import { adminAccessEmail } from "@/lib/emails/adminAccess";
+import { siteBase } from "@/lib/siteUrl";
 
 export type AccessLinkKind = "invite" | "recovery";
 
 /** Links open a page that only consumes the token on submit, so email scanners cannot use it up. */
 export function accessLinkUrl(tokenHash: string, kind: AccessLinkKind): string {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/+$/, "");
+  const base = siteBase();
   const params = new URLSearchParams({ token_hash: tokenHash, type: kind });
   return `${base}/admin/set-password?${params}`;
 }

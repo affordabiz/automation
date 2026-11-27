@@ -49,6 +49,7 @@ export default async function EntryPage({ params }: { params: Promise<{ id: stri
           label: `Template ${t.number}`,
         }))}
         canEdit={canEdit}
+        canDelete={hasPermission(actor, "entries.delete")}
         enquiries={enquiries.map((m) => ({ ...m, dateLabel: formatDate(m.created_at) }))}
         conversation={
           <Conversation

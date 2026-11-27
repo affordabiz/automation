@@ -4,6 +4,9 @@ export type EntryStatus = "approved" | "pending" | "draft" | "suspended";
 
 export const ENTRY_STATUSES: readonly EntryStatus[] = ["approved", "pending", "draft", "suspended"];
 
+/** Status tabs on the Entries page. Suspended webpages are managed from the Webpages page. */
+export const ENTRY_TABS: readonly EntryStatus[] = ["approved", "pending", "draft"];
+
 export const ENTRY_STATUS_LABELS: Record<EntryStatus, string> = {
   approved: "Active",
   pending: "Pending Review",

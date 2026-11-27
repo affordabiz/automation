@@ -4,6 +4,7 @@ import { requireMember } from "@/lib/admin/auth";
 import { formatDate, listAudit, listMembers, listRoles } from "@/lib/admin/data";
 import { hasPermission } from "@/lib/admin/permissions";
 import { countEntries } from "@/lib/entries/store";
+import { countFailedPayments } from "@/lib/payments/store";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -16,13 +17,15 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
 
   const canSeeEntries = hasPermission(member, "entries.view");
   const canSeePages = hasPermission(member, "webpages.view");
+  const canSeePayments = hasPermission(member, "payments.view");
 
-  const [members, roles, activity, pending, live] = await Promise.all([
+  const [members, roles, activity, pending, live, failedPayments] = await Promise.all([
     canSeeTeam ? listMembers() : null,
     canSeeRoles ? listRoles() : null,
     canSeeAudit ? listAudit(8) : null,
     canSeeEntries ? countEntries("pending") : null,
     canSeePages ? countEntries("approved") : null,
+    canSeePayments ? countFailedPayments().catch(() => null) : null,
   ]);
 
   return (
@@ -41,6 +44,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {pending !== null ? <Stat label="Entries awaiting review" value={pending} href="/admin/entries?status=pending" /> : null}
         {live !== null ? <Stat label="Live webpages" value={live} href="/admin/webpages" /> : null}
+        {failedPayments !== null ? <Stat label="Failed payments" value={failedPayments} href="/admin/payments?status=failed" /> : null}
         {members ? <Stat label="Team members" value={members.length} href="/admin/team" /> : null}
         {roles ? <Stat label="Roles" value={roles.length} href="/admin/roles" /> : null}
       </div>

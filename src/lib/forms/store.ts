@@ -30,7 +30,9 @@ export interface FormListItem {
   status: FormStatus;
   is_system: boolean;
   updated_at: string;
+  /** Responses; for the built-in onboarding form, its entries. */
   submissions: number;
+  views: number;
 }
 
 export interface SubmissionRecord {
@@ -45,15 +47,33 @@ export interface SubmissionRecord {
 const FORM_COLUMNS =
   "id,key,name,slug,description,status,draft_schema,published_schema,published_at,is_system,created_at,updated_at";
 
+type ListRow = Omit<FormListItem, "submissions" | "views"> & {
+  form_submissions: { count: number }[];
+  entries: { count: number }[];
+  form_stats?: { views: number } | { views: number }[] | null;
+};
+
+const LIST_BASE = "id,name,slug,status,is_system,updated_at,form_submissions(count),entries(count)";
+
+function viewsOf(stats: ListRow["form_stats"]): number {
+  const row = Array.isArray(stats) ? stats[0] : stats;
+  return Number(row?.views ?? 0);
+}
+
 export async function listForms(): Promise<FormListItem[]> {
-  const { data, error } = await serviceClient()
-    .from("forms")
-    .select("id,name,slug,status,is_system,updated_at,form_submissions(count)")
-    .order("updated_at", { ascending: false })
-    .limit(200)
-    .returns<(Omit<FormListItem, "submissions"> & { form_submissions: { count: number }[] })[]>();
-  if (error) throw new Error(`Could not load forms: ${error.message}`);
-  return data.map(({ form_submissions, ...form }) => ({ ...form, submissions: form_submissions[0]?.count ?? 0 }));
+  const query = (columns: string) =>
+    serviceClient().from("forms").select(columns).order("updated_at", { ascending: false }).limit(200).returns<ListRow[]>();
+  let { data, error } = await query(`${LIST_BASE},form_stats(views)`);
+  if (error && /form_stats/i.test(error.message)) {
+    // Migration 0006 not applied yet: list forms without view counts.
+    ({ data, error } = await query(LIST_BASE));
+  }
+  if (error || !data) throw new Error(`Could not load forms: ${error?.message ?? "no data"}`);
+  return data.map(({ form_submissions, entries, form_stats, ...form }) => ({
+    ...form,
+    submissions: form.is_system ? (entries[0]?.count ?? 0) : (form_submissions[0]?.count ?? 0),
+    views: viewsOf(form_stats),
+  }));
 }
 
 export async function getForm(id: string): Promise<FormRecord | null> {

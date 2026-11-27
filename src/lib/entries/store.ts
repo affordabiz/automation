@@ -13,7 +13,7 @@ export interface Entry extends LiveEntryRow {
   logo_path: string | null;
   photo_path: string | null;
   published_at: string | null;
-  source: "form" | "sanity";
+  source: "form" | "sanity" | "wordpress";
   reply_token: string;
   created_at: string;
 }
@@ -33,11 +33,18 @@ export async function isSlugTaken(slug: string, exceptId?: string): Promise<bool
 
 export const uploadEntryImage = uploadImageAsset;
 
+/** An image already stored for an earlier webpage, reused instead of a new upload. */
+export interface ExistingImage {
+  path: string | null;
+  url: string | null;
+}
+
 export async function createPendingEntry(
   input: OnboardingData,
-  logo: File,
-  photo: File,
+  logo: File | ExistingImage,
+  photo: File | ExistingImage,
   formId?: string,
+  options: { paymentId?: string } = {},
 ): Promise<{ result: "created"; entry: Entry } | { result: "conflict" }> {
   const service = serviceClient();
   let resolvedFormId = formId;
@@ -54,10 +61,13 @@ export async function createPendingEntry(
   const id = crypto.randomUUID();
   const uploaded: string[] = [];
   try {
-    const [logoPath, photoPath] = await Promise.all([
-      uploadEntryImage(logo).then((p) => (uploaded.push(p), p)),
-      uploadEntryImage(photo).then((p) => (uploaded.push(p), p)),
-    ]);
+    const store = async (image: File | ExistingImage): Promise<ExistingImage> => {
+      if (!(image instanceof File)) return image;
+      const path = await uploadEntryImage(image);
+      uploaded.push(path);
+      return { path, url: null };
+    };
+    const [logoImage, photoImage] = await Promise.all([store(logo), store(photo)]);
     const { data, error } = await service
       .from("entries")
       .insert({
@@ -71,8 +81,11 @@ export async function createPendingEntry(
         phone: input.phone,
         address: input.address,
         serving_area: input.servingArea,
-        logo_path: logoPath,
-        photo_path: photoPath,
+        logo_path: logoImage.path,
+        photo_path: photoImage.path,
+        logo_url: logoImage.url,
+        photo_url: photoImage.url,
+        payment_id: options.paymentId ?? null,
       })
       .select(ENTRY_COLUMNS)
       .single<Entry>();

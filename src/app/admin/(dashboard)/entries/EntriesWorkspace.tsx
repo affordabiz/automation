@@ -1,14 +1,20 @@
 "use client";
 
-import { ChevronRight, EllipsisVertical, FileText, Globe, LoaderCircle, Trash2, X } from "lucide-react";
+import { ChevronRight, EllipsisVertical, FileText, Globe, LoaderCircle, Search, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useOptimistic, useRef, useState, useTransition } from "react";
 import type { ActionState } from "@/lib/admin/actionState";
-import { ENTRY_STATUS_LABELS, ENTRY_STATUSES, type EntryListItem, type EntryStatus } from "@/lib/entries/mapping";
+import { ENTRY_STATUS_LABELS, ENTRY_TABS, type EntryListItem, type EntryStatus } from "@/lib/entries/mapping";
 import { StatusBadge } from "../../_components/StatusBadge";
 import { deleteEntriesAction, draftEntriesAction, publishEntriesAction, setAutoPublishAction } from "./actions";
 
 type Row = EntryListItem & { dateLabel: string };
+
+function matches(row: Row, terms: string[]): boolean {
+  if (terms.length === 0) return true;
+  const haystack = `${row.full_name} ${row.business_name} ${row.slug}`.toLowerCase();
+  return terms.every((t) => haystack.includes(t));
+}
 type Operation = { type: "status"; ids: string[]; status: EntryStatus } | { type: "remove"; ids: string[] };
 
 function applyOperation(rows: Row[], op: Operation): Row[] {
@@ -187,13 +193,16 @@ export function EntriesWorkspace(props: {
   const [deleteIds, setDeleteIds] = useState<string[] | null>(null);
   const [notice, setNotice] = useState<ActionState | null>(null);
   const [pending, startTransition] = useTransition();
+  const [query, setQuery] = useState("");
+  const terms = useMemo(() => query.trim().toLowerCase().split(/s+/).filter(Boolean), [query]);
+  const matched = useMemo(() => rows.filter((r) => matches(r, terms)), [rows, terms]);
 
   const counts = useMemo(() => {
     const totals: Record<EntryStatus, number> = { approved: 0, pending: 0, draft: 0, suspended: 0 };
-    for (const r of rows) totals[r.status]++;
+    for (const r of matched) totals[r.status]++;
     return totals;
-  }, [rows]);
-  const visible = useMemo(() => rows.filter((r) => r.status === status), [rows, status]);
+  }, [matched]);
+  const visible = useMemo(() => matched.filter((r) => r.status === status), [matched, status]);
   const selectedRows = visible.filter((r) => selected.has(r.id));
   const allSelected = visible.length > 0 && selectedRows.length === visible.length;
 
@@ -272,7 +281,7 @@ export function EntriesWorkspace(props: {
       </header>
 
       <div role="tablist" aria-label="Filter entries by status" className="-mx-1 flex gap-1 overflow-x-auto border-b border-slate-200 px-1">
-        {ENTRY_STATUSES.map((s) => (
+        {ENTRY_TABS.map((s) => (
           <button
             key={s}
             type="button"
@@ -287,6 +296,31 @@ export function EntriesWorkspace(props: {
         ))}
       </div>
 
+      <div className="relative">
+        <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-slate-400" aria-hidden />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setSelected(new Set());
+          }}
+          placeholder="Search by name, business name or slug"
+          aria-label="Search entries by name, business name or slug"
+          className="block w-full rounded-xl border border-slate-200 bg-white py-2.5 pr-10 pl-10 text-sm shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20 [&::-webkit-search-cancel-button]:hidden"
+        />
+        {query ? (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={() => setQuery("")}
+            className="absolute top-1/2 right-2 grid size-7 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+          >
+            <X className="size-4" aria-hidden />
+          </button>
+        ) : null}
+      </div>
+
       {notice?.error || notice?.message ? (
         <div role={notice.error ? "alert" : "status"} className={`flex items-start justify-between gap-3 rounded-lg px-4 py-2.5 text-sm ${notice.error ? "bg-red-50 text-red-800" : "bg-emerald-50 text-emerald-900"}`}>
           <p>{notice.error ?? notice.message}</p>
@@ -298,8 +332,20 @@ export function EntriesWorkspace(props: {
 
       {visible.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-          <p className="font-medium text-slate-700">No {ENTRY_STATUS_LABELS[status].toLowerCase()} entries</p>
-          <p className="mt-1 text-sm text-slate-500">Entries with this status will appear here.</p>
+          {terms.length > 0 ? (
+            <>
+              <p className="font-medium text-slate-700">No {ENTRY_STATUS_LABELS[status].toLowerCase()} entries match &ldquo;{query.trim()}&rdquo;</p>
+              <p className="mt-1 text-sm text-slate-500">Try another word, or check the other tabs.</p>
+              <button type="button" onClick={() => setQuery("")} className="mt-4 rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                Clear search
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="font-medium text-slate-700">No {ENTRY_STATUS_LABELS[status].toLowerCase()} entries</p>
+              <p className="mt-1 text-sm text-slate-500">Entries with this status will appear here.</p>
+            </>
+          )}
         </div>
       ) : (
         <>

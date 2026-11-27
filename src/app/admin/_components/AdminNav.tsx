@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Globe, Inbox, LayoutDashboard, ScrollText, ShieldCheck, Users, Workflow } from "lucide-react";
+import { CreditCard, FileText, Globe, Inbox, LayoutDashboard, ScrollText, ShieldCheck, Users, Workflow } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hasPermission, type Permission } from "@/lib/admin/permissions";
@@ -10,6 +10,7 @@ const ITEMS: { label: string; href?: string; icon: typeof Users; permission?: Pe
   { label: "Forms", href: "/admin/forms", icon: FileText, permission: "forms.view" },
   { label: "Entries", href: "/admin/entries", icon: Inbox, permission: "entries.view" },
   { label: "Webpages", href: "/admin/webpages", icon: Globe, permission: "webpages.view" },
+  { label: "Payments", href: "/admin/payments", icon: CreditCard, permission: "payments.view" },
   { label: "Automations", href: "/admin/automations", icon: Workflow, permission: "automations.view" },
   { label: "Team", href: "/admin/team", icon: Users, permission: "team.view" },
   { label: "Roles", href: "/admin/roles", icon: ShieldCheck, permission: "roles.manage" },

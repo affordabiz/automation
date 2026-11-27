@@ -8,9 +8,9 @@ export function FormTabs({ id, name, published }: { id: string; name: string; pu
   const pathname = usePathname();
   const base = `/admin/forms/${id}`;
   const tabs = [
+    { href: `${base}/submissions`, label: "Responses", icon: Inbox, active: pathname === `${base}/submissions` },
     { href: base, label: "Build", icon: PencilRuler, active: pathname === base },
     { href: `${base}/share`, label: "Share", icon: Share2, active: pathname === `${base}/share` },
-    { href: `${base}/submissions`, label: "Responses", icon: Inbox, active: pathname === `${base}/submissions` },
   ];
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">

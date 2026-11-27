@@ -7,7 +7,7 @@ import { listEntries } from "@/lib/entries/store";
 import { getTemplateMeta } from "@/templates/catalog";
 import { StatusBadge } from "../../_components/StatusBadge";
 import { restoreWebpageAction, suspendWebpageAction } from "../entries/actions";
-import { ConfirmAction } from "../entries/EntryActions";
+import { ConfirmAction, DeleteEntryButton } from "../entries/EntryActions";
 
 export const metadata: Metadata = { title: "Webpages" };
 
@@ -16,12 +16,13 @@ export default async function WebpagesPage() {
   const pages = await listEntries(["approved", "suspended"]);
   const canManage = hasPermission(actor, "webpages.manage");
   const canOpenEntry = hasPermission(actor, "entries.view");
+  const canDelete = hasPermission(actor, "entries.delete");
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <header>
         <h1 className="text-2xl font-bold tracking-tight">Webpages</h1>
-        <p className="mt-1 text-sm text-slate-600">Approved client webpages. Suspended pages are offline but keep their address.</p>
+        <p className="mt-1 text-sm text-slate-600">Approved client webpages. Suspended pages are offline but keep their address. Deleting a page frees its address for anyone to use.</p>
       </header>
 
       <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
@@ -55,13 +56,14 @@ export default async function WebpagesPage() {
                 <td className="px-4 py-3 text-slate-600">{getTemplateMeta(p.template_number)?.name ?? `Template ${p.template_number}`}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-slate-600">{p.published_at ? formatDate(p.published_at) : "—"}</td>
                 <td className="px-4 py-3"><StatusBadge status={p.status} /></td>
-                <td className="px-4 py-3">
+                <td className="space-y-2 px-4 py-3">
                   {canManage && p.status === "approved" ? (
                     <ConfirmAction action={suspendWebpageAction.bind(null, p.id)} label="Suspend" confirmLabel="Take offline" />
                   ) : null}
                   {canManage && p.status === "suspended" ? (
                     <ConfirmAction action={restoreWebpageAction.bind(null, p.id)} label="Restore" confirmLabel="Put online" />
                   ) : null}
+                  {canDelete ? <DeleteEntryButton id={p.id} slug={p.slug} /> : null}
                 </td>
               </tr>
             ))}

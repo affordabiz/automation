@@ -10,8 +10,11 @@ export function ImageInput(props: {
   help: string;
   error?: string;
   rounded?: boolean;
+  /** An image already on the client's webpage. When set, choosing a new file is optional. */
+  existingUrl?: string | null;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
+  const shown = preview ?? props.existingUrl ?? null;
   const id = `field-${props.name}`;
   return (
     <div>
@@ -22,9 +25,9 @@ export function ImageInput(props: {
         <div
           className={`grid size-20 shrink-0 place-items-center overflow-hidden bg-slate-100 ring-1 ring-slate-200 ${props.rounded ? "rounded-full" : "rounded-xl"}`}
         >
-          {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
-            <img src={preview} alt="" className="size-full object-cover" />
+          {shown ? (
+            // eslint-disable-next-line @next/next/no-img-element -- local object URL or existing image preview
+            <img src={shown} alt="" className="size-full object-cover" />
           ) : (
             <ImagePlus className="size-6 text-slate-400" aria-hidden />
           )}
@@ -34,7 +37,7 @@ export function ImageInput(props: {
             id={id}
             name={props.name}
             type="file"
-            required
+            required={!props.existingUrl}
             accept={props.accept.join(",")}
             aria-invalid={props.error ? true : undefined}
             aria-describedby={`${id}-help`}

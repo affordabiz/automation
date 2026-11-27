@@ -1,8 +1,18 @@
+import { REDIRECT_SLUGS } from "./legacyRedirects";
+
 export const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,48}[a-z0-9])$/;
 
+/** Site pages carried over from WordPress at their original addresses. */
+export const SITE_PAGE_SLUGS = [
+  "intake", "intake2", "getstarted", "get-started-here", "report-paid-upfront",
+  "privacy-policy-2", "term-condition", "cheatsheets", "compliance",
+] as const;
+
 export const RESERVED_SLUGS: ReadonlySet<string> = new Set([
-  "studio", "api", "create", "templates", "_next", "admin", "embed",
+  "studio", "api", "create", "templates", "_next", "admin", "embed", "pay", "files", "site", "samples",
   "favicon.ico", "robots.txt", "sitemap.xml",
+  ...SITE_PAGE_SLUGS,
+  ...REDIRECT_SLUGS,
 ]);
 
 export const SLUG_FORMAT_MESSAGE =

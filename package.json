@@ -14,7 +14,8 @@
     "seed": "tsx --env-file=.env.local scripts/seed-templates.ts",
     "admin:bootstrap": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/bootstrap-owner.mts",
     "admin:import-sanity": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/import-sanity-sites.mts",
-    "admin:move-uploads": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/move-uploads-to-sanity.mts"
+    "admin:move-uploads": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/move-uploads-to-sanity.mts",
+    "admin:import-wordpress": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/import-wordpress.mts"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.6.3",
@@ -28,6 +29,7 @@
     "react-dom": "19.3.1",
     "sanity": "^6.24.0",
     "server-only": "^0.0.1",
+    "stripe": "23.2.0",
     "styled-components": "^6.6.0",
     "zod": "^4.6.7"
   },

@@ -8,6 +8,7 @@ import type { EntryStatus } from "@/lib/entries/mapping";
 import { inputClass, labelClass, Notice } from "../../../_components/forms";
 import { StatusBadge } from "../../../_components/StatusBadge";
 import { publishEntriesAction, updateEntryAction } from "../actions";
+import { DeleteEntryButton } from "../EntryActions";
 
 interface EntryView {
   id: string;
@@ -185,6 +186,7 @@ export function EntryDetail({
   images,
   templates,
   canEdit,
+  canDelete,
   enquiries,
   conversation,
 }: {
@@ -192,6 +194,7 @@ export function EntryDetail({
   images: { logoUrl: string | null; photoUrl: string | null };
   templates: { number: number; label: string }[];
   canEdit: boolean;
+  canDelete: boolean;
   enquiries: Enquiry[];
   conversation: ReactNode;
 }) {
@@ -199,6 +202,7 @@ export function EntryDetail({
   const [notice, setNotice] = useState<ActionState>({});
   const [publishing, startPublish] = useTransition();
   const isActive = entry.status === "approved";
+  const backHref = entry.status === "suspended" ? "/admin/webpages" : `/admin/entries?status=${entry.status}`;
 
   function publish() {
     setNotice({});
@@ -214,11 +218,11 @@ export function EntryDetail({
   return (
     <div className="space-y-5">
       <Link
-        href={`/admin/entries?status=${entry.status}`}
+        href={backHref}
         className="group inline-flex items-center gap-1.5 rounded-lg py-1 pr-2 text-sm font-medium text-slate-600 transition hover:text-slate-900"
       >
         <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" aria-hidden />
-        Back to Entries
+        {entry.status === "suspended" ? "Back to Webpages" : "Back to Entries"}
       </Link>
 
       <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -316,6 +320,18 @@ export function EntryDetail({
                 ))}
               </ul>
             </details>
+          ) : null}
+
+          {canDelete ? (
+            <section className="flex flex-col gap-3 rounded-2xl border border-red-100 bg-white p-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="font-semibold text-red-800">Delete entry</h2>
+                <p className="mt-1 text-sm text-slate-600">
+                  Removes the webpage, details and messages, and frees <span className="font-mono">/{entry.slug}</span> for anyone to use.
+                </p>
+              </div>
+              <DeleteEntryButton id={entry.id} slug={entry.slug} redirectTo={backHref} />
+            </section>
           ) : null}
         </div>
 
